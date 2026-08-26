@@ -38,10 +38,91 @@
         </div>
     </section>
 
+    <!-- ABOUT SECTION -->
+    <section class="about-section">
+        <div class="about-container">
+
+            <!-- Country -->
+            <div class="about-card">
+                <div class="about-card-label">Country</div>
+                <div class="about-card-value">
+                    <span class="flag">🇸🇬</span> Singapore
+                </div>
+            </div>
+
+            <!-- Likes & Interests -->
+            <div class="about-card">
+                <div class="about-card-label">Likes &amp; Interests</div>
+                <div class="interests-list">
+                    <span class="interest-tag">🎨 Designing</span>
+                    <span class="interest-tag">🎮 Creating Games</span>
+                    <span class="interest-tag">😴 Sleeping</span>
+                </div>
+            </div>
+
+            <!-- Language Proficiency -->
+            <div class="about-card">
+                <div class="about-card-label">Language Proficiency</div>
+                <div class="lang-list">
+
+                    <div class="lang-item">
+                        <div class="lang-header">
+                            <span class="lang-name">English</span>
+                            <span class="lang-pct">100%</span>
+                        </div>
+                        <div class="lang-bar-bg">
+                            <div class="lang-bar-fill" style="--pct: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="lang-item">
+                        <div class="lang-header">
+                            <span class="lang-name">Chinese</span>
+                            <span class="lang-pct">94%</span>
+                        </div>
+                        <div class="lang-bar-bg">
+                            <div class="lang-bar-fill" style="--pct: 94%"></div>
+                        </div>
+                    </div>
+
+                    <div class="lang-item">
+                        <div class="lang-header">
+                            <span class="lang-name">Vietnamese</span>
+                            <span class="lang-pct">62%</span>
+                        </div>
+                        <div class="lang-bar-bg">
+                            <div class="lang-bar-fill" style="--pct: 62%"></div>
+                        </div>
+                    </div>
+
+                    <div class="lang-item">
+                        <div class="lang-header">
+                            <span class="lang-name">Malay</span>
+                            <span class="lang-pct">23%</span>
+                        </div>
+                        <div class="lang-bar-bg">
+                            <div class="lang-bar-fill" style="--pct: 23%"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer>
         <p>© 2026 Definitely_Andrew · All rights reserved</p>
     </footer>
 
+    <script>
+        // Animate bars on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.lang-bar-fill').forEach(bar => {
+                bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
+            });
+        });
+    </script>
 </body>
 </html>

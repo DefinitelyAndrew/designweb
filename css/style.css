@@ -2,3 +2,20 @@
 .nav-active{color:#fff!important;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:9999px;padding:4px 12px;}
 nav{justify-content:center!important;}.nav-links{justify-content:center;}
 .card-btn{width:auto!important;padding:0 18px!important;border-radius:9999px!important;min-width:56px;height:32px!important;line-height:32px!important;font-size:14px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+
+/* ── ABOUT SECTION ── */
+.about-section{padding:60px 0 80px}
+.about-container{max-width:680px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;gap:20px}
+.about-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px}
+.about-card-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent3);margin-bottom:16px}
+.about-card-value{font-size:18px;font-weight:600;color:#fff;display:flex;align-items:center;gap:10px}
+.flag{font-size:22px}
+.interests-list{display:flex;flex-wrap:wrap;gap:10px}
+.interest-tag{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9999px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:var(--text);font-size:13px;font-weight:500}
+.lang-list{display:flex;flex-direction:column;gap:16px}
+.lang-item{}
+.lang-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.lang-name{font-size:13px;font-weight:600;color:var(--text)}
+.lang-pct{font-size:12px;font-weight:600;color:var(--accent3)}
+.lang-bar-bg{width:100%;height:6px;background:var(--border);border-radius:9999px;overflow:hidden}
+.lang-bar-fill{height:100%;width:0;border-radius:9999px;background:linear-gradient(90deg,var(--accent1),var(--accent3));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
