@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Definitely_Andrew</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar-wrap">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">⌂ Home</a></li>
+                <li><a href="projects.html" class="nav-active">&#128196; Projects</a></li>
+                <li><a href="about.html">&#9786; About</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- PAGE HEADER + SEARCH -->
+    <section class="page-header" id="works">
+        <div class="page-header-inner">
+            <div class="page-title-row">
+                <h2 class="page-title" id="filter-title">All Projects</h2>
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search projects…">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STICKY FILTER + SORT BAR -->
+    <div class="filter-bar-wrap" id="filter-bar">
+        <div class="filter-bar-inner">
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="*">All</button>
+                <button class="filter-btn" data-filter="fiction">Fiction</button>
+                <button class="filter-btn" data-filter="nonfiction">Nonfiction</button>
+                <button class="filter-btn" data-filter="games">Games</button>
+            </div>
+            <div class="sort-wrapper">
+                <label for="sort-options">Sort:</label>
+                <select id="sort-options">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="alphabetical">A–Z</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CARD GRID -->
+    <section class="works-section">
+        <div class="works-container">
+            <div class="works-grid" id="works-grid">
+
+                <div class="card fiction" data-date="2025-11-30" data-title="Project 1">
+                    <div class="card-placeholder"></div>
+                    <div class="card-content">
+                        <h3>Project 1</h3>
+                        <a href="#" class="card-btn">→</a>
+                    </div>
+                </div>
+
+                <div class="card nonfiction" data-date="2025-01-01" data-title="Project 2">
+                    <div class="card-placeholder"></div>
+                    <div class="card-content">
+                        <h3>Project 2</h3>
+                        <a href="#" class="card-btn">→</a>
+                    </div>
+                </div>
+
+                <div class="card games" data-date="2024-01-01" data-title="Project 3">
+                    <div class="card-placeholder"></div>
+                    <div class="card-content">
+                        <h3>Project 3</h3>
+                        <a href="#" class="card-btn">→</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="empty-state" id="empty-state" style="display:none;">
+                <p>No projects match your search.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Definitely_Andrew · All rights reserved</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
