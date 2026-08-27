@@ -104,17 +104,48 @@
             font-weight: 700;
             letter-spacing: .06em;
             text-transform: uppercase;
-            border: 1px solid rgba(255, 182, 213, 0.35);
             color: #ffb6d5;
             background: rgba(255, 182, 213, 0.08);
             position: relative;
-            overflow: hidden;
             cursor: default;
-            transition: border-color .2s, background .2s;
+            /* animated gradient border via outline trick */
+            border: none;
+            isolation: isolate;
         }
-        .role-pill:hover {
-            border-color: rgba(255, 182, 213, 0.6);
-            background: rgba(255, 182, 213, 0.14);
+        /* rotating gradient border using pseudo-element + conic-gradient */
+        .role-pill::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            border-radius: 9999px;
+            background: conic-gradient(
+                from var(--angle, 0deg),
+                #ff80b5,
+                #ffffff,
+                #ffb6d5,
+                #ff80b5,
+                #ffffff,
+                #ff80b5
+            );
+            z-index: -1;
+            animation: border-spin 2.5s linear infinite;
+        }
+        /* inner bg to mask the gradient, leaving just the border */
+        .role-pill::after {
+            content: '';
+            position: absolute;
+            inset: 1.5px;
+            border-radius: 9999px;
+            background: #0d0d1f;
+            z-index: -1;
+        }
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes border-spin {
+            to { --angle: 360deg; }
         }
         /* the dot */
         .role-dot {
@@ -129,26 +160,6 @@
         @keyframes role-pulse {
             0%, 100% { box-shadow: 0 0 5px 1px rgba(255,128,181,.7); opacity: 1; }
             50%       { box-shadow: 0 0 12px 3px rgba(255,128,181,.95); opacity: .85; }
-        }
-        /* shimmer sweep */
-        .role-pill::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -80%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(
-                105deg,
-                transparent 30%,
-                rgba(255,255,255,.18) 50%,
-                transparent 70%
-            );
-            animation: role-shimmer 3.2s ease-in-out infinite;
-        }
-        @keyframes role-shimmer {
-            0%   { left: -80%; }
-            50%  { left: 130%; }
-            100% { left: 130%; }
         }
 
         .project-section {
