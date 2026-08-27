@@ -127,20 +127,17 @@
     </footer>
 
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             const cards = document.querySelectorAll('.about-card');
-
-            // Double rAF ensures opacity:0 is actually painted before we start the transition
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     cards.forEach((card, i) => {
                         setTimeout(() => {
                             card.classList.add('visible');
-                            // Animate language bars when this card becomes visible
                             card.querySelectorAll('.lang-bar-fill').forEach(bar => {
                                 bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
                             });
-                        }, i * 150); // 0ms, 150ms, 300ms stagger
+                        }, i * 200);
                     });
                 });
             });
