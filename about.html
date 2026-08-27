@@ -127,35 +127,25 @@
     </footer>
 
     <script>
-        // Scroll-triggered jump-in for about-cards
-        const observer = new IntersectionObserver((entries) => {
+        const aboutObserver = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll('.about-card').forEach(card => {
-            observer.observe(card);
-        });
-
-        // Animate language bars when their card becomes visible
-        const barObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                    // Animate language bars when card becomes visible
                     entry.target.querySelectorAll('.lang-bar-fill').forEach(bar => {
                         bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
                     });
-                    barObserver.unobserve(entry.target);
+                    obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
 
-        document.querySelectorAll('.about-card').forEach(card => {
-            barObserver.observe(card);
-        });
+        // Small delay so browser renders opacity:0 first
+        setTimeout(() => {
+            document.querySelectorAll('.about-card').forEach(card => {
+                aboutObserver.observe(card);
+            });
+        }, 60);
     </script>
 </body>
 </html>
