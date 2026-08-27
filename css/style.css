@@ -3,6 +3,31 @@
 nav{justify-content:center!important;}.nav-links{justify-content:center;}
 .card-btn{width:auto!important;padding:0 18px!important;border-radius:9999px!important;min-width:56px;height:32px!important;line-height:32px!important;font-size:14px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
 
+/* ── NAV ICONS ── */
+.nav-icon{width:15px;height:15px;vertical-align:middle;margin-right:6px;flex-shrink:0;stroke:currentColor;transition:transform .2s}
+.nav-links a{display:inline-flex;align-items:center;gap:0}
+.nav-links a:hover .nav-icon{transform:scale(1.15)}
+.nav-active .nav-icon{stroke:#fff}
+
+/* ── SCROLL-TRIGGERED JUMP-IN ── */
+.card,
+.about-card{
+    opacity:0;
+    transform:translateY(32px) scale(0.97);
+    transition:opacity 0.45s cubic-bezier(.22,.68,0,1.2), transform 0.45s cubic-bezier(.22,.68,0,1.2);
+}
+.card.visible,
+.about-card.visible{
+    opacity:1;
+    transform:translateY(0) scale(1);
+}
+/* stagger siblings */
+.card:nth-child(2),.about-card:nth-child(2){transition-delay:.08s}
+.card:nth-child(3),.about-card:nth-child(3){transition-delay:.16s}
+.card:nth-child(4),.about-card:nth-child(4){transition-delay:.24s}
+.card:nth-child(5),.about-card:nth-child(5){transition-delay:.32s}
+.card:nth-child(6),.about-card:nth-child(6){transition-delay:.40s}
+
 /* ── ABOUT SECTION ── */
 .about-section{padding:60px 0 80px}
 .about-container{max-width:680px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;gap:20px}

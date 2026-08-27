@@ -15,9 +15,35 @@
     <div class="navbar-wrap">
         <nav>
             <ul class="nav-links">
-                <li><a href="index.html">⌂ Home</a></li>
-                <li><a href="projects.html">&#128196; Projects</a></li>
-                <li><a href="about.html" class="nav-active">&#9786; About</a></li>
+                <li>
+                    <a href="index.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.75z"/>
+                            <path d="M9 22V12h6v10"/>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="projects.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Projects
+                    </a>
+                </li>
+                <li>
+                    <a href="about.html" class="nav-active">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                        </svg>
+                        About
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -101,11 +127,34 @@
     </footer>
 
     <script>
-        // Animate bars on load
-        window.addEventListener('load', () => {
-            document.querySelectorAll('.lang-bar-fill').forEach(bar => {
-                bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
+        // Scroll-triggered jump-in for about-cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
             });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.about-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Animate language bars when their card becomes visible
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.lang-bar-fill').forEach(bar => {
+                        bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.about-card').forEach(card => {
+            barObserver.observe(card);
         });
     </script>
 </body>
