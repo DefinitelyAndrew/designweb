@@ -253,16 +253,39 @@
         }
 
         /* ── EXPERIENCES GRID ── */
+        .exp-segment { margin-bottom: 28px; }
+        .exp-segment:last-child { margin-bottom: 0; }
+        .exp-segment-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .exp-segment-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .exp-segment-label.featured  { color: #fbbf24; }
+        .exp-segment-label.partner   { color: #60a5fa; }
+        .exp-segment-label.legacy    { color: var(--muted); }
+        .exp-segment-label.upcoming  { color: #34d399; }
         .experiences-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
         }
         .exp-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 18px 20px;
+            padding: 16px 18px;
             transition: border-color .2s, transform .2s;
         }
         .exp-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
@@ -270,13 +293,20 @@
             font-size: 13px;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-        .exp-card-desc {
-            font-size: 12px;
+        .exp-card-tag {
+            font-size: 11px;
             color: var(--muted);
-            line-height: 1.6;
+            font-weight: 500;
         }
+        /* tint borders per segment */
+        .exp-segment.featured  .exp-card { border-color: rgba(251,191,36,.2); }
+        .exp-segment.featured  .exp-card:hover { border-color: rgba(251,191,36,.5); }
+        .exp-segment.partner   .exp-card { border-color: rgba(96,165,250,.2); }
+        .exp-segment.partner   .exp-card:hover { border-color: rgba(96,165,250,.5); }
+        .exp-segment.upcoming  .exp-card { border-color: rgba(52,211,153,.2); }
+        .exp-segment.upcoming  .exp-card:hover { border-color: rgba(52,211,153,.5); }
 
         .project-divider {
             height: 1px;
@@ -411,7 +441,7 @@
 
         <!-- DESCRIPTION -->
         <div class="project-section anim-item">
-            <div class="project-section-label">About</div>
+            <div class="project-section-label">Game Description</div>
             <p>
                 Welcome to The SPCC Hub! This hub brings together all of our transport experiences
                 in one place, including SPLRT Redefined, NSEWL 2024 and Sentosa Express.
@@ -429,20 +459,63 @@
         <!-- EXPERIENCES -->
         <div class="project-section anim-item">
             <div class="project-section-label">Experiences</div>
-            <div class="experiences-grid">
-                <div class="exp-card">
-                    <div class="exp-card-name">SPLRT Redefined</div>
-                    <div class="exp-card-desc">Recreates Singapore's Sengkang–Punggol LRT, including both the SKLRT and PGLRT networks.</div>
-                </div>
-                <div class="exp-card">
-                    <div class="exp-card-name">NSEWL 2024</div>
-                    <div class="exp-card-desc">Inspired by Singapore's North–South Line and East–West Line. Updated for 2024.</div>
-                </div>
-                <div class="exp-card">
-                    <div class="exp-card-name">Sentosa Express</div>
-                    <div class="exp-card-desc">Inspired by Singapore's iconic Sentosa Express monorail.</div>
+
+            <!-- Featured -->
+            <div class="exp-segment featured">
+                <div class="exp-segment-label featured">Featured</div>
+                <div class="experiences-grid">
+                    <div class="exp-card">
+                        <div class="exp-card-name">Sentosa Express</div>
+                        <div class="exp-card-tag">SENTEX</div>
+                    </div>
+                    <div class="exp-card">
+                        <div class="exp-card-name">SPLRT Redefined</div>
+                        <div class="exp-card-tag">SPLRT:R</div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Partner Collection -->
+            <div class="exp-segment partner">
+                <div class="exp-segment-label partner">Partner Collection</div>
+                <div class="experiences-grid">
+                    <div class="exp-card">
+                        <div class="exp-card-name">Project Ho Chi Minh</div>
+                        <div class="exp-card-tag">Partner</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy -->
+            <div class="exp-segment legacy">
+                <div class="exp-segment-label legacy">Legacy</div>
+                <div class="experiences-grid">
+                    <div class="exp-card">
+                        <div class="exp-card-name">SPLRT Legacy</div>
+                        <div class="exp-card-tag">SPLRT:L</div>
+                    </div>
+                    <div class="exp-card">
+                        <div class="exp-card-name">NSEWL 2022</div>
+                        <div class="exp-card-tag">Legacy</div>
+                    </div>
+                    <div class="exp-card">
+                        <div class="exp-card-name">NSEWL 2024</div>
+                        <div class="exp-card-tag">Legacy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming -->
+            <div class="exp-segment upcoming">
+                <div class="exp-segment-label upcoming">Upcoming</div>
+                <div class="experiences-grid">
+                    <div class="exp-card">
+                        <div class="exp-card-name">Thomson-East Coast Line</div>
+                        <div class="exp-card-tag">Coming Soon</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="project-divider"></div>
