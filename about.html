@@ -127,25 +127,24 @@
     </footer>
 
     <script>
-        const aboutObserver = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // Animate language bars when card becomes visible
-                    entry.target.querySelectorAll('.lang-bar-fill').forEach(bar => {
-                        bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
-                    });
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+        window.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.about-card');
 
-        // Small delay so browser renders opacity:0 first
-        setTimeout(() => {
-            document.querySelectorAll('.about-card').forEach(card => {
-                aboutObserver.observe(card);
+            // Double rAF ensures opacity:0 is actually painted before we start the transition
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    cards.forEach((card, i) => {
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                            // Animate language bars when this card becomes visible
+                            card.querySelectorAll('.lang-bar-fill').forEach(bar => {
+                                bar.style.width = bar.style.getPropertyValue('--pct') || '0%';
+                            });
+                        }, i * 150); // 0ms, 150ms, 300ms stagger
+                    });
+                });
             });
-        }, 60);
+        });
     </script>
 </body>
 </html>
