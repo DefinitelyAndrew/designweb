@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | Definitely_Andrew</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .notfound-wrap {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 24px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* ── 404 HEADING ── */
+        .notfound-code {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            line-height: 1;
+            margin-bottom: 32px;
+        }
+
+        .notfound-digit {
+            font-size: clamp(6rem, 20vw, 11rem);
+            font-weight: 800;
+            letter-spacing: -.04em;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* the face-zero */
+        .notfound-face {
+            position: relative;
+            width: clamp(80px, 18vw, 156px);
+            height: clamp(80px, 18vw, 156px);
+            border: clamp(6px, 1.2vw, 11px) solid #fff;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(6px, 1.2vw, 11px);
+            flex-shrink: 0;
+        }
+
+        .face-eyes {
+            display: flex;
+            gap: clamp(10px, 2.5vw, 22px);
+            margin-top: clamp(-6px, -0.8vw, -4px);
+        }
+
+        .face-eye {
+            width: clamp(7px, 1.3vw, 12px);
+            height: clamp(7px, 1.3vw, 12px);
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .face-mouth {
+            width: clamp(22px, 4vw, 40px);
+            height: clamp(11px, 2vw, 20px);
+            border: clamp(3px, 0.6vw, 5px) solid #fff;
+            border-top: none;
+            border-radius: 0 0 100px 100px;
+            margin-top: clamp(-2px, -0.3vw, -2px);
+        }
+
+        /* ── TEXT ── */
+        .notfound-title {
+            font-size: clamp(1.1rem, 3vw, 1.6rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -.02em;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .notfound-sub {
+            font-size: clamp(0.82rem, 1.8vw, 1rem);
+            font-weight: 400;
+            color: var(--muted);
+            margin-bottom: 36px;
+            max-width: 380px;
+            line-height: 1.7;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .notfound-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, transform .2s;
+        }
+        .notfound-back:hover {
+            background: rgba(255,255,255,.08);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        .notfound-back svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar-wrap">
+        <nav>
+            <ul class="nav-links">
+                <li>
+                    <a href="index.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.75z"/>
+                            <path d="M9 22V12h6v10"/>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="projects.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Projects
+                    </a>
+                </li>
+                <li>
+                    <a href="about.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="notfound-wrap">
+
+        <!-- 4 😐 4 -->
+        <div class="notfound-code" aria-label="404">
+            <span class="notfound-digit">4</span>
+            <div class="notfound-face" aria-hidden="true">
+                <div class="face-eyes">
+                    <div class="face-eye"></div>
+                    <div class="face-eye"></div>
+                </div>
+                <div class="face-mouth"></div>
+            </div>
+            <span class="notfound-digit">4</span>
+        </div>
+
+        <p class="notfound-title">The page could not be found.</p>
+        <p class="notfound-sub">Even after we tried searching high and low.</p>
+
+        <a class="notfound-back" onclick="history.back(); return false;" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+            </svg>
+            Go back
+        </a>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Definitely_Andrew · All rights reserved</p>
+    </footer>
+
+</body>
+</html>
