@@ -314,6 +314,69 @@
             margin: 40px 0;
         }
 
+        /* ── COLLAPSIBLE SECTION ── */
+        .collapsible-section {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        .collapsible-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            background: var(--surface);
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            transition: background .2s;
+            gap: 12px;
+        }
+        .collapsible-trigger:hover { background: rgba(255,255,255,.04); }
+        .collapsible-trigger-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .collapsible-trigger-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 2px;
+        }
+        .collapsible-trigger-left { flex: 1; }
+        .collapsible-chevron {
+            width: 20px; height: 20px;
+            flex-shrink: 0;
+            color: var(--muted);
+            transition: transform .3s cubic-bezier(.4,0,.2,1);
+        }
+        .collapsible-section.open .collapsible-chevron {
+            transform: rotate(180deg);
+        }
+        .collapsible-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .35s cubic-bezier(.4,0,.2,1);
+            background: var(--bg);
+            border-top: 0px solid var(--border);
+        }
+        .collapsible-section.open .collapsible-body {
+            grid-template-rows: 1fr;
+            border-top-width: 1px;
+        }
+        .collapsible-inner {
+            overflow: hidden;
+            padding: 0 24px;
+        }
+        .collapsible-section.open .collapsible-inner {
+            padding: 32px 24px;
+        }
+
         /* fade-in helper */
         .anim-item {
             opacity: 0;
@@ -459,77 +522,95 @@
 
         <div class="project-divider"></div>
 
-        <!-- EXPERIENCES -->
-        <div class="project-section anim-item">
-            <div class="project-section-label">Experiences</div>
+        <!-- GAME INFO (collapsible) -->
+        <div class="collapsible-section anim-item" id="gameInfoSection">
+            <button class="collapsible-trigger" id="gameInfoTrigger" aria-expanded="false" aria-controls="gameInfoBody">
+                <div class="collapsible-trigger-left">
+                    <div class="collapsible-trigger-label">Section</div>
+                    <div class="collapsible-trigger-title">Game Info</div>
+                </div>
+                <svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+            <div class="collapsible-body" id="gameInfoBody" role="region" aria-labelledby="gameInfoTrigger">
+                <div class="collapsible-inner">
 
-            <!-- Featured -->
-            <div class="exp-segment featured">
-                <div class="exp-segment-label featured">Featured</div>
-                <div class="experiences-grid">
-                    <div class="exp-card">
-                        <div class="exp-card-name">Sentosa Express</div>
-                        <div class="exp-card-tag">SENTEX</div>
+                    <!-- EXPERIENCES -->
+                    <div class="project-section">
+                        <div class="project-section-label">Experiences</div>
+
+                        <!-- Featured -->
+                        <div class="exp-segment featured">
+                            <div class="exp-segment-label featured">Featured</div>
+                            <div class="experiences-grid">
+                                <div class="exp-card">
+                                    <div class="exp-card-name">Sentosa Express</div>
+                                    <div class="exp-card-tag">SENTEX</div>
+                                </div>
+                                <div class="exp-card">
+                                    <div class="exp-card-name">SPLRT Redefined</div>
+                                    <div class="exp-card-tag">SPLRT:R</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Partner Collection -->
+                        <div class="exp-segment partner">
+                            <div class="exp-segment-label partner">Partner Collection</div>
+                            <div class="experiences-grid">
+                                <div class="exp-card">
+                                    <div class="exp-card-name">Project Ho Chi Minh</div>
+                                    <div class="exp-card-tag">Partner</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legacy -->
+                        <div class="exp-segment legacy">
+                            <div class="exp-segment-label legacy">Legacy</div>
+                            <div class="experiences-grid">
+                                <div class="exp-card">
+                                    <div class="exp-card-name">SPLRT Legacy</div>
+                                    <div class="exp-card-tag">SPLRT:L</div>
+                                </div>
+                                <div class="exp-card">
+                                    <div class="exp-card-name">NSEWL 2022</div>
+                                    <div class="exp-card-tag">Legacy</div>
+                                </div>
+                                <div class="exp-card">
+                                    <div class="exp-card-name">NSEWL 2024</div>
+                                    <div class="exp-card-tag">Legacy</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming -->
+                        <div class="exp-segment upcoming">
+                            <div class="exp-segment-label upcoming">Upcoming</div>
+                            <div class="experiences-grid">
+                                <div class="exp-card">
+                                    <div class="exp-card-name">Thomson-East Coast Line</div>
+                                    <div class="exp-card-tag">Coming Soon</div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="exp-card">
-                        <div class="exp-card-name">SPLRT Redefined</div>
-                        <div class="exp-card-tag">SPLRT:R</div>
+
+                    <div class="project-divider"></div>
+
+                    <!-- PLAY LINK -->
+                    <div class="project-section" style="text-align:center;">
+                        <a href="https://www.roblox.com/games/9897335462/SPCC-Trains-The-Hub"
+                           target="_blank" rel="noopener"
+                           class="btn-primary" style="display:inline-flex;">
+                            Play on Roblox →
+                        </a>
                     </div>
+
                 </div>
             </div>
-
-            <!-- Partner Collection -->
-            <div class="exp-segment partner">
-                <div class="exp-segment-label partner">Partner Collection</div>
-                <div class="experiences-grid">
-                    <div class="exp-card">
-                        <div class="exp-card-name">Project Ho Chi Minh</div>
-                        <div class="exp-card-tag">Partner</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Legacy -->
-            <div class="exp-segment legacy">
-                <div class="exp-segment-label legacy">Legacy</div>
-                <div class="experiences-grid">
-                    <div class="exp-card">
-                        <div class="exp-card-name">SPLRT Legacy</div>
-                        <div class="exp-card-tag">SPLRT:L</div>
-                    </div>
-                    <div class="exp-card">
-                        <div class="exp-card-name">NSEWL 2022</div>
-                        <div class="exp-card-tag">Legacy</div>
-                    </div>
-                    <div class="exp-card">
-                        <div class="exp-card-name">NSEWL 2024</div>
-                        <div class="exp-card-tag">Legacy</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upcoming -->
-            <div class="exp-segment upcoming">
-                <div class="exp-segment-label upcoming">Upcoming</div>
-                <div class="experiences-grid">
-                    <div class="exp-card">
-                        <div class="exp-card-name">Thomson-East Coast Line</div>
-                        <div class="exp-card-tag">Coming Soon</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="project-divider"></div>
-
-        <!-- PLAY LINK -->
-        <div class="project-section anim-item" style="text-align:center;">
-            <a href="https://www.roblox.com/games/9897335462/SPCC-Trains-The-Hub"
-               target="_blank" rel="noopener"
-               class="btn-primary" style="display:inline-flex;">
-                Play on Roblox →
-            </a>
         </div>
 
     </div>
@@ -571,6 +652,14 @@
         track.addEventListener('touchend',   e => {
             const diff = startX - e.changedTouches[0].clientX;
             if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+        });
+
+        // ── COLLAPSIBLE ──
+        const gameInfoSection = document.getElementById('gameInfoSection');
+        const gameInfoTrigger = document.getElementById('gameInfoTrigger');
+        gameInfoTrigger.addEventListener('click', () => {
+            const isOpen = gameInfoSection.classList.toggle('open');
+            gameInfoTrigger.setAttribute('aria-expanded', isOpen);
         });
 
         // ── SCROLL ANIMATIONS ──
