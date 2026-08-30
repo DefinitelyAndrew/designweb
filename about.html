@@ -60,6 +60,12 @@
                 </div>
             </div>
 
+            <!-- Local Time -->
+            <div class="about-card">
+                <div class="about-card-label">Local Time</div>
+                <div class="about-card-value" id="sgClock">—</div>
+            </div>
+
             <!-- Likes & Interests -->
             <div class="about-card">
                 <div class="about-card-label">Likes &amp; Interests</div>
@@ -127,6 +133,21 @@
     </footer>
 
     <script>
+        // ── SG CLOCK ──
+        function updateSGClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-SG', {
+                timeZone: 'Asia/Singapore',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            document.getElementById('sgClock').textContent = timeStr;
+        }
+        updateSGClock();
+        setInterval(updateSGClock, 1000);
+
         window.addEventListener('load', () => {
             const cards = document.querySelectorAll('.about-card');
             requestAnimationFrame(() => {
