@@ -8,6 +8,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* card content always visible on touch devices */
+        @media (hover: none) {
+            .card-content {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 480px) {
+            .page-header-inner { padding: 0 16px; }
+            .filter-bar-inner { padding: 8px 12px; }
+            .works-container { padding: 0 12px; }
+        }
+    </style>
 </head>
 <body>
 

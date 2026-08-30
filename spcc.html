@@ -389,6 +389,26 @@
             transition: opacity .5s ease, transform .5s ease;
         }
         .anim-item.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .project-body { padding: 0 16px 60px; }
+            .project-header { padding: 28px 0 24px; }
+            .project-title { margin-bottom: 16px; }
+            .collapsible-trigger { padding: 16px 18px; }
+            .collapsible-section.open .collapsible-inner { padding: 20px 16px; }
+            .collapsible-inner { padding: 0 16px; }
+            .exp-segment { margin-bottom: 22px; }
+            .experiences-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .exp-card { padding: 13px 14px; }
+        }
+        @media (max-width: 480px) {
+            .project-body { padding: 0 12px 48px; }
+            .collapsible-trigger { padding: 14px 14px; }
+            .collapsible-section.open .collapsible-inner { padding: 16px 12px; }
+            .experiences-grid { grid-template-columns: 1fr; }
+            .project-meta { gap: 8px; }
+        }
     </style>
 </head>
 <body>
