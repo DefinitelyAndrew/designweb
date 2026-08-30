@@ -333,6 +333,7 @@
             text-align: left;
             transition: background .2s;
             gap: 12px;
+            font-family: 'Montserrat', sans-serif;
         }
         .collapsible-trigger:hover { background: rgba(255,255,255,.04); }
         .collapsible-trigger-label {
@@ -375,6 +376,10 @@
         }
         .collapsible-section.open .collapsible-inner {
             padding: 32px 24px;
+        }
+        /* carousel inside collapsible: remove double border-radius on top */
+        .collapsible-inner .carousel-wrap {
+            margin-bottom: 32px;
         }
 
         /* fade-in helper */
@@ -460,68 +465,6 @@
             </div>
         </div>
 
-        <!-- CAROUSEL -->
-        <div class="carousel-wrap anim-item">
-            <div class="carousel-track-outer">
-                <div class="carousel-track" id="carouselTrack">
-
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_thehubcover.png" alt="SPCC The Hub Cover">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss1.png" alt="Screenshot 1">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss2.png" alt="Screenshot 2">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss3.png" alt="Screenshot 3">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss4.png" alt="Screenshot 4">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss5.png" alt="Screenshot 5">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss6.png" alt="Screenshot 6">
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="assets/spcc_ss7.png" alt="Screenshot 7">
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Arrows -->
-            <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">
-                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button class="carousel-btn next" id="carouselNext" aria-label="Next">
-                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-
-            <!-- Dots -->
-            <div class="carousel-dots" id="carouselDots"></div>
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div class="project-section anim-item">
-            <div class="project-section-label">Game Description</div>
-            <p>
-                Welcome to The SPCC Hub! This hub brings together all of our transport experiences
-                in one place, including SPLRT Redefined, NSEWL 2024 and Sentosa Express.
-                SPLRT Redefined is inspired by Singapore's Sengkang–Punggol LRT (SPLRT),
-                recreating the Sengkang LRT (SKLRT) and Punggol LRT (PGLRT) networks.
-                NSEWL 2024 is inspired by Singapore's North–South Line (NSL) and East–West Line (EWL).
-                Sentosa Express is inspired by Singapore's iconic Sentosa Express monorail.
-                As the hub continues to grow, even more experiences will be added, including titles
-                from our partners.
-            </p>
-        </div>
-
-        <div class="project-divider"></div>
-
         <!-- GAME INFO (collapsible) -->
         <div class="collapsible-section anim-item" id="gameInfoSection">
             <button class="collapsible-trigger" id="gameInfoTrigger" aria-expanded="false" aria-controls="gameInfoBody">
@@ -535,6 +478,68 @@
             </button>
             <div class="collapsible-body" id="gameInfoBody" role="region" aria-labelledby="gameInfoTrigger">
                 <div class="collapsible-inner">
+
+                    <!-- CAROUSEL -->
+                    <div class="carousel-wrap">
+                        <div class="carousel-track-outer">
+                            <div class="carousel-track" id="carouselTrack">
+
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_thehubcover.png" alt="SPCC The Hub Cover">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss1.png" alt="Screenshot 1">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss2.png" alt="Screenshot 2">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss3.png" alt="Screenshot 3">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss4.png" alt="Screenshot 4">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss5.png" alt="Screenshot 5">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss6.png" alt="Screenshot 6">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="assets/spcc_ss7.png" alt="Screenshot 7">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Arrows -->
+                        <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+                        <button class="carousel-btn next" id="carouselNext" aria-label="Next">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+
+                        <!-- Dots -->
+                        <div class="carousel-dots" id="carouselDots"></div>
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="project-section">
+                        <div class="project-section-label">Game Description</div>
+                        <p>
+                            Welcome to The SPCC Hub! This hub brings together all of our transport experiences
+                            in one place, including SPLRT Redefined, NSEWL 2024 and Sentosa Express.
+                            SPLRT Redefined is inspired by Singapore's Sengkang–Punggol LRT (SPLRT),
+                            recreating the Sengkang LRT (SKLRT) and Punggol LRT (PGLRT) networks.
+                            NSEWL 2024 is inspired by Singapore's North–South Line (NSL) and East–West Line (EWL).
+                            Sentosa Express is inspired by Singapore's iconic Sentosa Express monorail.
+                            As the hub continues to grow, even more experiences will be added, including titles
+                            from our partners.
+                        </p>
+                    </div>
+
+                    <div class="project-divider"></div>
 
                     <!-- EXPERIENCES -->
                     <div class="project-section">
