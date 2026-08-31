@@ -35,6 +35,140 @@
             background: rgba(255, 82, 82, 0.15);
             color: #ff5252;
         }
+
+        /* ── DND Schedule collapsible ── */
+        .dnd-schedule {
+            margin-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding-top: 10px;
+        }
+        .dnd-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: inherit;
+            opacity: 0.55;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: opacity 0.2s;
+        }
+        .dnd-toggle:hover { opacity: 0.9; }
+        .dnd-chevron {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+        .dnd-toggle[aria-expanded="true"] .dnd-chevron {
+            transform: rotate(180deg);
+        }
+        .dnd-list {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .dnd-list.open {
+            max-height: 600px;
+            opacity: 1;
+        }
+        .dnd-list ul {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .dnd-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 5px 9px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+        }
+        .dnd-list li.active-range {
+            background: rgba(255, 82, 82, 0.1);
+            color: #ff5252;
+        }
+        .dnd-day {
+            font-weight: 600;
+            opacity: 0.7;
+            min-width: 72px;
+        }
+        .dnd-time {
+            opacity: 0.85;
+            text-align: right;
+        }
+        .dnd-badge {
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(255,82,82,0.2);
+            color: #ff5252;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Discord card ── */
+        .discord-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .discord-field-label {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.45;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .discord-field-value {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            color: inherit;
+            opacity: 0.4;
+            transition: opacity 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        .copy-btn:hover {
+            opacity: 0.9;
+            background: rgba(255,255,255,0.08);
+        }
+        .copy-btn.copied {
+            opacity: 1;
+            color: #48c774;
+        }
     </style>
 </head>
 <body>
@@ -94,6 +228,19 @@
                 <div class="about-card-value" id="sgClock">—</div>
                 <div class="about-card-sub" id="sgDate">—</div>
                 <div class="contact-status" id="contactStatus">—</div>
+
+                <!-- DND Schedule Collapsible -->
+                <div class="dnd-schedule">
+                    <button class="dnd-toggle" id="dndToggle" aria-expanded="false" aria-controls="dndList">
+                        <span>Do Not Contact Schedule</span>
+                        <svg class="dnd-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="dnd-list" id="dndList" aria-hidden="true">
+                        <ul id="dndUpcoming"></ul>
+                    </div>
+                </div>
             </div>
 
             <!-- Likes & Interests -->
@@ -106,16 +253,35 @@
                 </div>
             </div>
 
-            <!-- Discord Username -->
+            <!-- Discord -->
             <div class="about-card">
-                <div class="about-card-label">Discord Username</div>
-                <div class="about-card-value">papaya69.</div>
-            </div>
-
-            <!-- Discord User ID -->
-            <div class="about-card">
-                <div class="about-card-label">Discord User ID</div>
-                <div class="about-card-value">1118354685812822077</div>
+                <div class="about-card-label">Discord</div>
+                <div class="discord-row">
+                    <div class="discord-field">
+                        <span class="discord-field-label">Username</span>
+                        <div class="discord-field-value">
+                            <span id="discordUsername">papaya69.</span>
+                            <button class="copy-btn" aria-label="Copy username" onclick="copyText('discordUsername', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="discord-field">
+                        <span class="discord-field-label">User ID</span>
+                        <div class="discord-field-value">
+                            <span id="discordId">1118354685812822077</span>
+                            <button class="copy-btn" aria-label="Copy user ID" onclick="copyText('discordId', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- YouTube -->
@@ -183,6 +349,20 @@
     </footer>
 
     <script>
+        // ── COPY TO CLIPBOARD ──
+        function copyText(elementId, btn) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.classList.add('copied');
+                // Swap to a checkmark icon temporarily
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+                }, 1800);
+            });
+        }
+
         // ── SG CLOCK + DATE + CONTACT STATUS ──
 
         // Returns total minutes since midnight for a given Date in SG time
