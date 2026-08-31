@@ -1,6 +1,6 @@
 /* ── Version / update check ── */
 (function () {
-    const CURRENT_SHA = '3b378327952949830f9c317e99fbb3954f8921b0';
+    const CURRENT_SHA = '91c512cfc41e9c0c813dfae8868f39ce751ab70f';
     const REPO        = 'DefinitelyAndrew/designweb';
     const API_URL     = `https://api.github.com/repos/${REPO}/commits/main`;
     const SHORT       = CURRENT_SHA.slice(0, 7);
