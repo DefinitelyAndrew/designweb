@@ -13,6 +13,28 @@
             .about-card-value { font-size: 15px; }
             .lang-name, .lang-pct { font-size: 12px; }
         }
+        .about-card-sub {
+            font-size: 13px;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+        .contact-status {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+        }
+        .contact-status.ok {
+            background: rgba(72, 199, 116, 0.15);
+            color: #48c774;
+        }
+        .contact-status.dnd {
+            background: rgba(255, 82, 82, 0.15);
+            color: #ff5252;
+        }
     </style>
 </head>
 <body>
@@ -70,6 +92,8 @@
             <div class="about-card">
                 <div class="about-card-label">Local Time</div>
                 <div class="about-card-value" id="sgClock">—</div>
+                <div class="about-card-sub" id="sgDate">—</div>
+                <div class="contact-status" id="contactStatus">—</div>
             </div>
 
             <!-- Likes & Interests -->
@@ -159,9 +183,66 @@
     </footer>
 
     <script>
-        // ── SG CLOCK ──
+        // ── SG CLOCK + DATE + CONTACT STATUS ──
+
+        // Returns total minutes since midnight for a given Date in SG time
+        function sgMinutes(date) {
+            const sg = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }));
+            return sg.getHours() * 60 + sg.getMinutes();
+        }
+
+        // Returns 0=Sun,1=Mon,...,6=Sat for SG time
+        function sgDay(date) {
+            return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' })).getDay();
+        }
+
+        // Each entry: [startH, startM, endH, endM]  — ranges are inclusive start, inclusive end (to the minute)
+        const DND = {
+            0: [ // Sunday
+                [0,0,   5,0],
+                [22,10, 23,59]
+            ],
+            1: [ // Monday
+                [0,0,   15,30],
+                [21,50, 23,59]
+            ],
+            2: [ // Tuesday
+                [0,0,   17,0],
+                [21,50, 23,59]
+            ],
+            3: [ // Wednesday
+                [0,0,   17,0],
+                [18,0,  20,0],
+                [21,50, 23,59]
+            ],
+            4: [ // Thursday
+                [0,0,   17,0],
+                [21,50, 23,59]
+            ],
+            5: [ // Friday
+                [0,0,   14,0],
+                [17,50, 22,0]
+            ],
+            6: [ // Saturday
+                [0,0,   16,0],
+                [23,0,  23,59]
+            ]
+        };
+
+        function isDoNotContact(date) {
+            const day = sgDay(date);
+            const mins = sgMinutes(date);
+            const ranges = DND[day] || [];
+            for (const [sh, sm, eh, em] of ranges) {
+                if (mins >= sh * 60 + sm && mins <= eh * 60 + em) return true;
+            }
+            return false;
+        }
+
         function updateSGClock() {
             const now = new Date();
+
+            // Time
             const timeStr = now.toLocaleTimeString('en-SG', {
                 timeZone: 'Asia/Singapore',
                 hour: 'numeric',
@@ -170,7 +251,28 @@
                 hour12: true
             });
             document.getElementById('sgClock').textContent = timeStr;
+
+            // Date
+            const dateStr = now.toLocaleDateString('en-SG', {
+                timeZone: 'Asia/Singapore',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('sgDate').textContent = dateStr;
+
+            // Contact status
+            const statusEl = document.getElementById('contactStatus');
+            if (isDoNotContact(now)) {
+                statusEl.textContent = '🔴 Do Not Contact';
+                statusEl.className = 'contact-status dnd';
+            } else {
+                statusEl.textContent = '🟢 Open to Contact';
+                statusEl.className = 'contact-status ok';
+            }
         }
+
         updateSGClock();
         setInterval(updateSGClock, 1000);
 
