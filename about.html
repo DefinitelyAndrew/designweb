@@ -121,7 +121,47 @@
             letter-spacing: 0.04em;
         }
 
-        /* ── Discord card ── */
+        /* ── DND Calendar ── */
+        .dnd-calendar {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+        .cal-day-name {
+            font-size: 10px;
+            font-weight: 700;
+            opacity: 0.4;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .cal-day.today .cal-day-name {
+            opacity: 0.9;
+            color: #fff;
+        }
+        .cal-blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 100%;
+        }
+        .cal-block {
+            height: 6px;
+            border-radius: 3px;
+            width: 100%;
+        }
+        .cal-block.free  { background: rgba(72,199,116,0.35); }
+        .cal-block.busy  { background: rgba(255,82,82,0.45); }
+        .cal-block.busy.now { box-shadow: 0 0 0 1px #ff5252; }
+        @media (max-width: 480px) {
+            .cal-day-name { font-size: 9px; }
+        }
         .discord-row {
             display: flex;
             flex-direction: column;
@@ -239,6 +279,7 @@
                     </button>
                     <div class="dnd-list" id="dndList" aria-hidden="true">
                         <ul id="dndUpcoming"></ul>
+                        <div class="dnd-calendar" id="dndCalendar"></div>
                     </div>
                 </div>
             </div>
@@ -354,7 +395,6 @@
             const text = document.getElementById(elementId).textContent;
             navigator.clipboard.writeText(text).then(() => {
                 btn.classList.add('copied');
-                // Swap to a checkmark icon temporarily
                 btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
                 setTimeout(() => {
                     btn.classList.remove('copied');
@@ -363,96 +403,165 @@
             });
         }
 
-        // ── SG CLOCK + DATE + CONTACT STATUS ──
-
-        // Returns total minutes since midnight for a given Date in SG time
-        function sgMinutes(date) {
-            const sg = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }));
-            return sg.getHours() * 60 + sg.getMinutes();
-        }
-
-        // Returns 0=Sun,1=Mon,...,6=Sat for SG time
-        function sgDay(date) {
-            return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' })).getDay();
-        }
-
-        // Each entry: [startH, startM, endH, endM]  — ranges are inclusive start, inclusive end (to the minute)
+        // ── DND DATA ──
+        // Each entry: [startH, startM, endH, endM]
         const DND = {
-            0: [ // Sunday
-                [0,0,   5,0],
-                [22,10, 23,59]
-            ],
-            1: [ // Monday
-                [0,0,   15,30],
-                [21,50, 23,59]
-            ],
-            2: [ // Tuesday
-                [0,0,   17,0],
-                [21,50, 23,59]
-            ],
-            3: [ // Wednesday
-                [0,0,   17,0],
-                [18,0,  20,0],
-                [21,50, 23,59]
-            ],
-            4: [ // Thursday
-                [0,0,   17,0],
-                [21,50, 23,59]
-            ],
-            5: [ // Friday
-                [0,0,   14,0],
-                [17,50, 22,0]
-            ],
-            6: [ // Saturday
-                [0,0,   16,0],
-                [23,0,  23,59]
-            ]
+            0: [[0,0,5,0],[22,10,23,59]],           // Sunday
+            1: [[0,0,15,30],[21,50,23,59]],          // Monday
+            2: [[0,0,17,0],[21,50,23,59]],           // Tuesday
+            3: [[0,0,17,0],[18,0,20,0],[21,50,23,59]], // Wednesday
+            4: [[0,0,17,0],[21,50,23,59]],           // Thursday
+            5: [[0,0,14,0],[17,50,22,0]],            // Friday
+            6: [[0,0,16,0],[23,0,23,59]]             // Saturday
         };
 
-        function isDoNotContact(date) {
-            const day = sgDay(date);
-            const mins = sgMinutes(date);
-            const ranges = DND[day] || [];
-            for (const [sh, sm, eh, em] of ranges) {
-                if (mins >= sh * 60 + sm && mins <= eh * 60 + em) return true;
-            }
-            return false;
+        const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const DAY_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+        // Get SG Date object (wall-clock time in SGT)
+        function sgNow() {
+            return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' }));
         }
 
+        function toMins(h, m) { return h * 60 + m; }
+
+        function isInDND(dayIndex, mins) {
+            return (DND[dayIndex] || []).some(([sh,sm,eh,em]) => mins >= toMins(sh,sm) && mins <= toMins(eh,em));
+        }
+
+        function fmtTime(h, m) {
+            const period = h < 12 ? 'am' : 'pm';
+            const hh = h % 12 === 0 ? 12 : h % 12;
+            const mm = m.toString().padStart(2,'0');
+            return mm === '00' ? `${hh}${period}` : `${hh}:${mm}${period}`;
+        }
+
+        // ── CLOCK + STATUS ──
         function updateSGClock() {
             const now = new Date();
+            const sg  = sgNow();
 
-            // Time
-            const timeStr = now.toLocaleTimeString('en-SG', {
-                timeZone: 'Asia/Singapore',
-                hour: 'numeric',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
+            document.getElementById('sgClock').textContent = now.toLocaleTimeString('en-SG', {
+                timeZone: 'Asia/Singapore', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
             });
-            document.getElementById('sgClock').textContent = timeStr;
-
-            // Date
-            const dateStr = now.toLocaleDateString('en-SG', {
-                timeZone: 'Asia/Singapore',
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            document.getElementById('sgDate').textContent = now.toLocaleDateString('en-SG', {
+                timeZone: 'Asia/Singapore', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
-            document.getElementById('sgDate').textContent = dateStr;
 
-            // Contact status
+            const dayIdx = sg.getDay();
+            const mins   = sg.getHours() * 60 + sg.getMinutes();
+            const isDND  = isInDND(dayIdx, mins);
+
             const statusEl = document.getElementById('contactStatus');
-            if (isDoNotContact(now)) {
-                statusEl.textContent = '🔴 Do Not Contact';
-                statusEl.className = 'contact-status dnd';
-            } else {
-                statusEl.textContent = '🟢 Open to Contact';
-                statusEl.className = 'contact-status ok';
+            statusEl.textContent = isDND ? '🔴 Do Not Contact' : '🟢 Open to Contact';
+            statusEl.className   = 'contact-status ' + (isDND ? 'dnd' : 'ok');
+        }
+
+        // ── BUILD UPCOMING LIST ──
+        function buildUpcoming() {
+            const sg     = sgNow();
+            const todayIdx = sg.getDay();
+            const nowMins  = sg.getHours() * 60 + sg.getMinutes();
+
+            // Collect all upcoming ranges across the next 7 days
+            const items = [];
+            for (let offset = 0; offset < 7; offset++) {
+                const dayIdx = (todayIdx + offset) % 7;
+                for (const [sh, sm, eh, em] of (DND[dayIdx] || [])) {
+                    const startMins = toMins(sh, sm);
+                    // Skip ranges that have already ended today
+                    if (offset === 0 && toMins(eh, em) < nowMins) continue;
+                    items.push({ dayIdx, offset, sh, sm, eh, em, startMins });
+                }
+            }
+
+            // Sort: today's future ranges first, then by day offset, then start time
+            items.sort((a, b) => {
+                if (a.offset !== b.offset) return a.offset - b.offset;
+                return a.startMins - b.startMins;
+            });
+
+            const ul = document.getElementById('dndUpcoming');
+            ul.innerHTML = '';
+            items.forEach(({ dayIdx, offset, sh, sm, eh, em }) => {
+                const currentMins = sg.getHours() * 60 + sg.getMinutes();
+                const isActive = offset === 0 && isInDND(dayIdx, currentMins);
+
+                const li = document.createElement('li');
+                if (isActive) li.classList.add('active-range');
+
+                const dayLabel = offset === 0 ? 'Today' : offset === 1 ? 'Tomorrow' : DAY_FULL[dayIdx];
+
+                li.innerHTML = `
+                    <span class="dnd-day">${dayLabel}</span>
+                    <span class="dnd-time">${fmtTime(sh,sm)} – ${fmtTime(eh,em)}</span>
+                    ${isActive ? '<span class="dnd-badge">NOW</span>' : ''}
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        // ── BUILD CALENDAR ──
+        function buildCalendar() {
+            const sg      = sgNow();
+            const todayIdx = sg.getDay();
+            const nowMins  = sg.getHours() * 60 + sg.getMinutes();
+
+            // We split each day into 8 blocks of 3 hours (0-3, 3-6, … 21-24)
+            const BLOCK_COUNT = 8;
+            const BLOCK_MINS  = (24 * 60) / BLOCK_COUNT; // 180 mins per block
+
+            const cal = document.getElementById('dndCalendar');
+            cal.innerHTML = '';
+
+            for (let d = 0; d < 7; d++) {
+                const dayIdx  = (todayIdx + d) % 7;
+                const isToday = d === 0;
+
+                const col = document.createElement('div');
+                col.className = 'cal-day' + (isToday ? ' today' : '');
+
+                const label = document.createElement('div');
+                label.className = 'cal-day-name';
+                label.textContent = DAY_SHORT[dayIdx];
+                col.appendChild(label);
+
+                const blocks = document.createElement('div');
+                blocks.className = 'cal-blocks';
+
+                for (let b = 0; b < BLOCK_COUNT; b++) {
+                    const blockStart = b * BLOCK_MINS;
+                    const blockEnd   = blockStart + BLOCK_MINS - 1;
+                    // Block is DND if its midpoint falls in a DND range
+                    const midpoint = blockStart + BLOCK_MINS / 2;
+                    const busy = isInDND(dayIdx, midpoint);
+
+                    const isNowBlock = isToday && nowMins >= blockStart && nowMins < blockStart + BLOCK_MINS;
+
+                    const blk = document.createElement('div');
+                    blk.className = 'cal-block ' + (busy ? 'busy' : 'free') + (isNowBlock ? ' now' : '');
+                    blk.title = `${DAY_FULL[dayIdx]} ${fmtTime(Math.floor(blockStart/60), blockStart%60)}–${fmtTime(Math.floor((blockEnd+1)/60), (blockEnd+1)%60)} · ${busy ? 'Do Not Contact' : 'OK'}`;
+                    blocks.appendChild(blk);
+                }
+
+                col.appendChild(blocks);
+                cal.appendChild(col);
             }
         }
 
+        // ── TOGGLE ──
+        document.getElementById('dndToggle').addEventListener('click', function () {
+            const list    = document.getElementById('dndList');
+            const isOpen  = list.classList.toggle('open');
+            this.setAttribute('aria-expanded', isOpen);
+            list.setAttribute('aria-hidden', !isOpen);
+            if (isOpen) {
+                buildUpcoming();
+                buildCalendar();
+            }
+        });
+
+        // ── INIT ──
         updateSGClock();
         setInterval(updateSGClock, 1000);
 
