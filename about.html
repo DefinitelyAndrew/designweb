@@ -90,25 +90,41 @@
         }
         .dnd-list li {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             font-size: 12px;
-            padding: 5px 9px;
+            padding: 6px 9px;
             border-radius: 8px;
             background: rgba(255,255,255,0.04);
+            gap: 8px;
         }
-        .dnd-list li.active-range {
-            background: rgba(255, 82, 82, 0.1);
-            color: #ff5252;
+        .dnd-list li.has-active {
+            background: rgba(255, 82, 82, 0.08);
         }
         .dnd-day {
             font-weight: 600;
             opacity: 0.7;
             min-width: 72px;
+            padding-top: 1px;
+            flex-shrink: 0;
+        }
+        .dnd-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: flex-end;
         }
         .dnd-time {
             opacity: 0.85;
-            text-align: right;
+            background: rgba(255,255,255,0.06);
+            border-radius: 5px;
+            padding: 1px 6px;
+            white-space: nowrap;
+        }
+        .dnd-time.active-time {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            opacity: 1;
         }
         .dnd-badge {
             font-size: 10px;
@@ -662,40 +678,50 @@
             const sg      = sgNow();
             const nowMins = sg.getHours() * 60 + sg.getMinutes();
 
-            const items = [];
+            // Collect ranges grouped by day offset
+            const dayMap = new Map(); // offset → { colDate, dayIdx, ranges[] }
             for (let offset = 0; offset < 14; offset++) {
                 const colDate = new Date(sg);
                 colDate.setDate(sg.getDate() + offset);
                 const dayIdx = colDate.getDay();
+                const ranges = [];
 
                 for (const [sh, sm, eh, em] of getDNDRanges(colDate)) {
-                    const startMins = toMins(sh, sm);
                     if (offset === 0 && toMins(eh, em) < nowMins) continue;
-                    items.push({ colDate: new Date(colDate), dayIdx, offset, sh, sm, eh, em, startMins });
+                    ranges.push({ sh, sm, eh, em });
+                }
+
+                if (ranges.length > 0) {
+                    dayMap.set(offset, { colDate: new Date(colDate), dayIdx, ranges });
                 }
             }
 
-            items.sort((a, b) => {
-                if (a.offset !== b.offset) return a.offset - b.offset;
-                return a.startMins - b.startMins;
-            });
-
             const ul = document.getElementById('dndUpcoming');
             ul.innerHTML = '';
-            items.forEach(({ colDate, dayIdx, offset, sh, sm, eh, em }) => {
+
+            dayMap.forEach(({ colDate, dayIdx, ranges }, offset) => {
                 const currentMins = sg.getHours() * 60 + sg.getMinutes();
-                const isActive = offset === 0 && isInDND(dayIdx, currentMins, colDate)
-                    && currentMins >= toMins(sh, sm) && currentMins <= toMins(eh, em);
+                const dayActive   = offset === 0 && isInDND(dayIdx, currentMins, colDate);
 
                 const li = document.createElement('li');
-                if (isActive) li.classList.add('active-range');
+                if (dayActive) li.classList.add('has-active');
 
                 const dayLabel = offset === 0 ? 'Today' : offset === 1 ? 'Tomorrow' : DAY_FULL[dayIdx];
 
+                // Build time chips
+                const chipsHtml = ranges.map(({ sh, sm, eh, em }) => {
+                    const isNow = offset === 0
+                        && currentMins >= toMins(sh, sm) && currentMins <= toMins(eh, em);
+                    const cls = isNow ? 'dnd-time active-time' : 'dnd-time';
+                    const label = (sh === 0 && sm === 0 && eh === 23 && em === 59)
+                        ? 'All day'
+                        : `${fmtTime(sh,sm)}–${fmtTime(eh,em)}`;
+                    return `<span class="${cls}">${label}${isNow ? ' <b>·</b> NOW' : ''}</span>`;
+                }).join('');
+
                 li.innerHTML = `
                     <span class="dnd-day">${dayLabel}</span>
-                    <span class="dnd-time">${fmtTime(sh,sm)} – ${fmtTime(eh,em)}</span>
-                    ${isActive ? '<span class="dnd-badge">NOW</span>' : ''}
+                    <span class="dnd-times">${chipsHtml}</span>
                 `;
                 ul.appendChild(li);
             });
