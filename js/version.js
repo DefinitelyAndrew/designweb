@@ -1,35 +1,41 @@
 /* ── Version / update check ── */
 (function () {
-    const CURRENT_SHA = 'd978b982e71e249099625989f4a4df5a44f44b16';
-    const REPO        = 'DefinitelyAndrew/designweb';
-    const API_URL     = `https://api.github.com/repos/${REPO}/commits/main`;
-    const SHORT       = CURRENT_SHA.slice(0, 7);
+    const BUILT_AT = '2026-09-03T11:15:17Z'; // replaced by pre-push hook
+    const REPO     = 'DefinitelyAndrew/designweb';
+    const API_URL  = `https://api.github.com/repos/${REPO}/commits/main`;
 
-    // ── Stamp the footer ──
+    // ── Stamp the footer with short SHA from API ──
     document.addEventListener('DOMContentLoaded', function () {
-        const footer = document.querySelector('footer p');
-        if (footer) {
-            const sep = document.createTextNode(' · ');
-            footer.appendChild(sep);
-
-            const link = document.createElement('a');
-            link.href        = `https://github.com/${REPO}/commit/${CURRENT_SHA}`;
-            link.target      = '_blank';
-            link.rel         = 'noopener noreferrer';
-            link.textContent = SHORT;
-            link.style.cssText = 'opacity:0.35;font-size:11px;font-family:monospace;text-decoration:none;color:inherit;transition:opacity 0.15s;';
-            link.addEventListener('mouseenter', function () { this.style.opacity = '0.8'; });
-            link.addEventListener('mouseleave', function () { this.style.opacity = '0.35'; });
-            footer.appendChild(link);
-        }
-
-        // ── Check for newer commit ──
+        // Check for newer commit by comparing timestamps
         fetch(API_URL, { cache: 'no-store' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                const latestSha = data && data.sha;
-                if (latestSha && latestSha !== CURRENT_SHA) {
-                    showUpdateBanner();
+                const latestSha  = data && data.sha;
+                const latestDate = data && data.commit && data.commit.committer && data.commit.committer.date;
+
+                // Stamp footer
+                const footer = document.querySelector('footer p');
+                if (footer && latestSha) {
+                    const sep = document.createTextNode(' · ');
+                    footer.appendChild(sep);
+                    const link = document.createElement('a');
+                    link.href      = `https://github.com/${REPO}/commit/${latestSha}`;
+                    link.target    = '_blank';
+                    link.rel       = 'noopener noreferrer';
+                    link.textContent = latestSha.slice(0, 7);
+                    link.style.cssText = 'opacity:0.35;font-size:11px;font-family:monospace;text-decoration:none;color:inherit;transition:opacity 0.15s;';
+                    link.addEventListener('mouseenter', function () { this.style.opacity = '0.8'; });
+                    link.addEventListener('mouseleave', function () { this.style.opacity = '0.35'; });
+                    footer.appendChild(link);
+                }
+
+                // Show banner if a newer commit exists than what this page was built from
+                if (latestDate && BUILT_AT !== '2000-01-01T00:00:00Z') {
+                    const builtTime  = new Date(BUILT_AT).getTime();
+                    const latestTime = new Date(latestDate).getTime();
+                    if (latestTime > builtTime) {
+                        showUpdateBanner();
+                    }
                 }
             })
             .catch(function () { /* silently ignore network errors */ });
