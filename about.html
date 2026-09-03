@@ -538,16 +538,81 @@
         }
 
         // ── DND DATA ──
-        // Each entry: [startH, startM, endH, endM]
+        // Weekly repeating schedule — each entry: [startH, startM, endH, endM]
         const DND = {
-            0: [[0,0,17,0],[22,10,23,59]],           // Sunday
-            1: [[0,0,15,30],[21,50,23,59]],          // Monday
-            2: [[0,0,17,0],[21,50,23,59]],           // Tuesday
+            0: [[0,0,17,0],[22,10,23,59]],             // Sunday
+            1: [[0,0,15,30],[21,50,23,59]],            // Monday
+            2: [[0,0,17,0],[21,50,23,59]],             // Tuesday
             3: [[0,0,17,0],[18,0,20,0],[21,50,23,59]], // Wednesday
-            4: [[0,0,17,0],[21,50,23,59]],           // Thursday
-            5: [[0,0,14,0],[17,50,22,0]],            // Friday
-            6: [[0,0,16,0],[23,0,23,59]]             // Saturday
+            4: [[0,0,17,0],[21,50,23,59]],             // Thursday
+            5: [[0,0,14,0],[17,50,22,0]],              // Friday
+            6: [[0,0,16,0],[23,0,23,59]]               // Saturday
         };
+
+        // Date-specific DND overrides (SGT) — keyed "YYYY-MM-DD"
+        // These REPLACE the weekly schedule for that date entirely.
+        // Use [0,0,23,59] for full-day DND.
+        const DND_DATES = {
+            // ── 7–13 Sept 2026 (PSLE week) ──
+            // Mon 7: classes 2–4pm + makeup lesson 6:30–8:30pm
+            // weekly already blocks 12am–3:30pm & 9:50pm–midnight
+            // missing gaps: 3:30pm–6:30pm and 8:30pm–9:50pm → add those
+            '2026-09-07': [[0,0,15,30],[18,30,21,50],[21,50,23,59]],
+
+            // Tue 8: classes 2–4pm → weekly already covers 12am–5pm & 9:50pm+, no extra needed
+            // but add full expected coverage
+            '2026-09-08': [[0,0,17,0],[21,50,23,59]],
+
+            // Wed 9: classes 2–4pm, math review 6–7pm, English 7–8pm
+            // weekly covers 12am–5pm & 6pm–8pm & 9:50pm+, so identical — no change needed
+            '2026-09-09': [[0,0,17,0],[18,0,20,0],[21,50,23,59]],
+
+            // Thu 10: Science 10am–12pm, 1–3pm; Chinese 2–4pm
+            // weekly covers 12am–5pm & 9:50pm+; add 10am–12pm before noon
+            '2026-09-10': [[0,0,12,0],[13,0,17,0],[21,50,23,59]],
+
+            // Fri 11: Remedial 8–10am; Science 10am–12pm, 1–3pm; Chinese 2–4pm; Pique Lab 7–9pm
+            // weekly covers 12am–2pm & 5:50pm–10pm; add 8am–2pm + 5:50pm–10pm
+            '2026-09-11': [[0,0,14,0],[17,50,22,0]],
+
+            // Sat 12: Math class 2–4pm, FLS English 2:30–5:30pm
+            // weekly covers 12am–4pm & 11pm+; add FLS English overhang 4pm–5:30pm
+            '2026-09-12': [[0,0,17,30],[23,0,23,59]],
+
+            // Sun 13: FLS English 2:30–5:30pm
+            // weekly covers 12am–5pm & 10:10pm+; add 5pm–5:30pm overhang
+            '2026-09-13': [[0,0,17,30],[22,10,23,59]],
+
+            // ── 14–15 Sept: full day ──
+            '2026-09-14': [[0,0,23,59]],
+            '2026-09-15': [[0,0,23,59]],
+
+            // ── 21 Sept – 2 Oct: full day ──
+            '2026-09-21': [[0,0,23,59]],
+            '2026-09-22': [[0,0,23,59]],
+            '2026-09-23': [[0,0,23,59]],
+            '2026-09-24': [[0,0,23,59]],
+            '2026-09-25': [[0,0,23,59]],
+            '2026-09-26': [[0,0,23,59]],
+            '2026-09-27': [[0,0,23,59]],
+            '2026-09-28': [[0,0,23,59]],
+            '2026-09-29': [[0,0,23,59]],
+            '2026-09-30': [[0,0,23,59]],
+            '2026-10-01': [[0,0,23,59]],
+            '2026-10-02': [[0,0,23,59]],
+        };
+
+        // Returns the date key "YYYY-MM-DD" for a JS Date in SG time
+        function sgDateKey(d) {
+            return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }); // gives YYYY-MM-DD
+        }
+
+        // Returns DND ranges for a given SG Date object
+        function getDNDRanges(sgDate) {
+            const key = sgDateKey(sgDate);
+            if (DND_DATES[key]) return DND_DATES[key];
+            return DND[sgDate.getDay()] || [];
+        }
 
         const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         const DAY_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -559,8 +624,9 @@
 
         function toMins(h, m) { return h * 60 + m; }
 
-        function isInDND(dayIndex, mins) {
-            return (DND[dayIndex] || []).some(([sh,sm,eh,em]) => mins >= toMins(sh,sm) && mins <= toMins(eh,em));
+        function isInDND(dayIndex, mins, sgDate) {
+            const ranges = sgDate ? getDNDRanges(sgDate) : (DND[dayIndex] || []);
+            return ranges.some(([sh,sm,eh,em]) => mins >= toMins(sh,sm) && mins <= toMins(eh,em));
         }
 
         function fmtTime(h, m) {
@@ -584,7 +650,7 @@
 
             const dayIdx = sg.getDay();
             const mins   = sg.getHours() * 60 + sg.getMinutes();
-            const isDND  = isInDND(dayIdx, mins);
+            const isDND  = isInDND(dayIdx, mins, sg);
 
             const statusEl = document.getElementById('contactStatus');
             statusEl.textContent = isDND ? '🔴 Do Not Contact' : '🟢 Open to Contact';
@@ -593,23 +659,22 @@
 
         // ── BUILD UPCOMING LIST ──
         function buildUpcoming() {
-            const sg     = sgNow();
-            const todayIdx = sg.getDay();
-            const nowMins  = sg.getHours() * 60 + sg.getMinutes();
+            const sg      = sgNow();
+            const nowMins = sg.getHours() * 60 + sg.getMinutes();
 
-            // Collect all upcoming ranges across the next 7 days
             const items = [];
-            for (let offset = 0; offset < 7; offset++) {
-                const dayIdx = (todayIdx + offset) % 7;
-                for (const [sh, sm, eh, em] of (DND[dayIdx] || [])) {
+            for (let offset = 0; offset < 14; offset++) {
+                const colDate = new Date(sg);
+                colDate.setDate(sg.getDate() + offset);
+                const dayIdx = colDate.getDay();
+
+                for (const [sh, sm, eh, em] of getDNDRanges(colDate)) {
                     const startMins = toMins(sh, sm);
-                    // Skip ranges that have already ended today
                     if (offset === 0 && toMins(eh, em) < nowMins) continue;
-                    items.push({ dayIdx, offset, sh, sm, eh, em, startMins });
+                    items.push({ colDate: new Date(colDate), dayIdx, offset, sh, sm, eh, em, startMins });
                 }
             }
 
-            // Sort: today's future ranges first, then by day offset, then start time
             items.sort((a, b) => {
                 if (a.offset !== b.offset) return a.offset - b.offset;
                 return a.startMins - b.startMins;
@@ -617,9 +682,10 @@
 
             const ul = document.getElementById('dndUpcoming');
             ul.innerHTML = '';
-            items.forEach(({ dayIdx, offset, sh, sm, eh, em }) => {
+            items.forEach(({ colDate, dayIdx, offset, sh, sm, eh, em }) => {
                 const currentMins = sg.getHours() * 60 + sg.getMinutes();
-                const isActive = offset === 0 && isInDND(dayIdx, currentMins);
+                const isActive = offset === 0 && isInDND(dayIdx, currentMins, colDate)
+                    && currentMins >= toMins(sh, sm) && currentMins <= toMins(eh, em);
 
                 const li = document.createElement('li');
                 if (isActive) li.classList.add('active-range');
@@ -751,13 +817,13 @@
                     col.appendChild(line);
                 }
 
-                // DND event blocks — repeating weekly schedule
-                for (const [sh, sm, eh, em] of (DND[dayIdx] || [])) {
+                // DND event blocks — use date-specific or weekly schedule
+                for (const [sh, sm, eh, em] of getDNDRanges(colDate)) {
                     const startPx = toMins(sh, sm) * PX_PER_MIN;
                     const endPx   = toMins(eh, em) * PX_PER_MIN;
                     const height  = Math.max(endPx - startPx, 10);
 
-                    const isActive = isToday && isInDND(dayIdx, nowMins)
+                    const isActive = isToday && isInDND(dayIdx, nowMins, colDate)
                         && nowMins >= toMins(sh, sm) && nowMins <= toMins(eh, em);
 
                     const ev = document.createElement('div');
