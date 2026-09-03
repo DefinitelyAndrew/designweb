@@ -1,44 +1,46 @@
 /* ── Version / update check ── */
 (function () {
-    const BUILT_AT = '2026-09-03T11:16:13Z'; // replaced by pre-push hook
-    const REPO     = 'DefinitelyAndrew/designweb';
-    const API_URL  = `https://api.github.com/repos/${REPO}/commits/main`;
+    const REPO  = 'DefinitelyAndrew/designweb';
+    const SK    = 'site_sha'; // sessionStorage key
 
-    // ── Stamp the footer with short SHA from API ──
     document.addEventListener('DOMContentLoaded', function () {
-        // Check for newer commit by comparing timestamps
-        fetch(API_URL, { cache: 'no-store' })
+
+        // Fetch version.json from the same origin (cache-busted)
+        fetch('/version.json?t=' + Date.now(), { cache: 'no-store' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                const latestSha  = data && data.sha;
-                const latestDate = data && data.commit && data.commit.committer && data.commit.committer.date;
+                const liveSha = data && data.sha;
+                if (!liveSha) return;
 
                 // Stamp footer
                 const footer = document.querySelector('footer p');
-                if (footer && latestSha) {
-                    const sep = document.createTextNode(' · ');
-                    footer.appendChild(sep);
+                if (footer && !footer.querySelector('.version-link')) {
+                    footer.appendChild(document.createTextNode(' · '));
                     const link = document.createElement('a');
-                    link.href      = `https://github.com/${REPO}/commit/${latestSha}`;
-                    link.target    = '_blank';
-                    link.rel       = 'noopener noreferrer';
-                    link.textContent = latestSha.slice(0, 7);
+                    link.className   = 'version-link';
+                    link.href        = 'https://github.com/' + REPO + '/commit/' + liveSha;
+                    link.target      = '_blank';
+                    link.rel         = 'noopener noreferrer';
+                    link.textContent = liveSha.slice(0, 7);
                     link.style.cssText = 'opacity:0.35;font-size:11px;font-family:monospace;text-decoration:none;color:inherit;transition:opacity 0.15s;';
                     link.addEventListener('mouseenter', function () { this.style.opacity = '0.8'; });
                     link.addEventListener('mouseleave', function () { this.style.opacity = '0.35'; });
                     footer.appendChild(link);
                 }
 
-                // Show banner if a newer commit exists than what this page was built from
-                if (latestDate && BUILT_AT !== '2000-01-01T00:00:00Z') {
-                    const builtTime  = new Date(BUILT_AT).getTime();
-                    const latestTime = new Date(latestDate).getTime();
-                    if (latestTime > builtTime) {
-                        showUpdateBanner();
-                    }
+                // First visit this session — store the SHA we loaded with
+                const stored = sessionStorage.getItem(SK);
+                if (!stored) {
+                    sessionStorage.setItem(SK, liveSha);
+                    return;
+                }
+
+                // Subsequent checks — if live SHA differs from what we stored, page is stale
+                if (stored !== liveSha) {
+                    showUpdateBanner();
                 }
             })
-            .catch(function () { /* silently ignore network errors */ });
+            .catch(function () { /* ignore network errors */ });
     });
 
     function showUpdateBanner() {
@@ -112,6 +114,7 @@
         document.body.appendChild(banner);
 
         document.getElementById('update-refresh-btn').addEventListener('click', function () {
+            sessionStorage.removeItem('${SK}');
             window.location.reload(true);
         });
         document.getElementById('update-dismiss-btn').addEventListener('click', function () {
