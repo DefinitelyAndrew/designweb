@@ -1,6 +1,6 @@
 /* ── Version / update check ── */
 (function () {
-    const REPO  = 'DefinitelyAndrew/designweb';
+    const REPO  = 'DefinitelyAndrew/me';
     const SK    = 'site_sha'; // sessionStorage key
 
     document.addEventListener('DOMContentLoaded', function () {
