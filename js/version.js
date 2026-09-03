@@ -1,6 +1,6 @@
 /* ── Version / update check ── */
 (function () {
-    const BUILT_AT = '2026-09-03T11:15:17Z'; // replaced by pre-push hook
+    const BUILT_AT = '2026-09-03T11:16:13Z'; // replaced by pre-push hook
     const REPO     = 'DefinitelyAndrew/designweb';
     const API_URL  = `https://api.github.com/repos/${REPO}/commits/main`;
 
