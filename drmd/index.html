@@ -4,921 +4,927 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DRMD – Circle Line</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── Fonts ── */
 @font-face {
     font-family: 'LTAIdentity';
     src: url('fonts/LTAIdentity-Medium.woff2') format('woff2'),
          url('fonts/LTAIdentity-Medium.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
 }
 
-/* ── Reset / base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-    --ccl: #f8971d;
-    --ccl-dark: #c97200;
-    --bg: #0a0a0a;
-    --screen-bg: #0d0d14;
-    --screen-border: #1e1e2e;
-    --text: #fff;
-    --text-dim: rgba(255,255,255,0.45);
-    --nsl: #e01a22;
-    --nel: #8b1693;
-    --ewl: #009645;
-    --dtl: #005da9;
-    --tel: #784008;
+    --ccl:    #f99d25;
+    --black:  #0a0a0a;
+    --dark:   #111;
+    --dim:    #222;
+    --nsl: #e01a22; --nel: #8b1693; --ewl: #009645;
+    --dtl: #005da9; --tel: #784008;
 }
-html, body {
-    width: 100%; height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Montserrat', sans-serif;
+
+body {
+    background: #1a1a1a;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     min-height: 100dvh;
-}
-
-/* ── Page wrapper ── */
-.page {
-    width: 100%;
-    max-width: 1100px;
-    padding: 24px 16px 40px;
-    display: flex;
-    flex-direction: column;
+    font-family: 'LTAIdentity', sans-serif;
     gap: 20px;
+    padding: 20px;
 }
 
-/* ── Screen shell ── */
-.screen-shell {
-    background: var(--screen-bg);
-    border: 2px solid var(--screen-border);
-    border-radius: 10px;
+/* ═══════════════════════════════════════
+   SCREEN BEZEL
+═══════════════════════════════════════ */
+.bezel {
+    width: 100%;
+    max-width: 960px;
+    background: #1c1c1c;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow:
+        0 0 0 2px #333,
+        0 20px 60px rgba(0,0,0,0.8);
+}
+
+/* ═══════════════════════════════════════
+   SCREEN ITSELF — 16:4.5 ratio
+═══════════════════════════════════════ */
+.screen {
+    background: var(--black);
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 0 40px rgba(248,151,29,0.08), 0 8px 32px rgba(0,0,0,0.6);
     display: flex;
     flex-direction: column;
+    aspect-ratio: 16 / 4.5;
     position: relative;
 }
 
-/* ── Top bar ── */
-.top-bar {
+/* ── Main body (3 columns) ── */
+.screen-body {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    height: 44px;
-    background: #111118;
-    border-bottom: 1px solid var(--screen-border);
-    flex-shrink: 0;
-}
-.top-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-/* CCL capslet */
-.capslet {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--ccl);
-    color: #000;
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 13px;
-    font-weight: normal;
-    padding: 3px 9px 3px 5px;
-    border-radius: 20px;
-    white-space: nowrap;
-    line-height: 1;
-    letter-spacing: 0.01em;
-}
-.capslet-dot {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: #000;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px;
-    color: var(--ccl);
-    font-family: 'LTAIdentity', sans-serif;
-    font-weight: normal;
-    flex-shrink: 0;
-}
-.line-name {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 13px;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 0.05em;
-}
-.clock {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 18px;
-    color: var(--ccl);
-    letter-spacing: 0.08em;
+    flex: 1;
+    min-height: 0;
 }
 
-/* ── Station info bar ── */
-.station-bar {
-    padding: 10px 18px 8px;
-    background: #0f0f1c;
-    border-bottom: 1px solid var(--screen-border);
+/* ── LEFT panel: current station ── */
+.panel-left {
+    width: 28%;
+    background: var(--black);
+    border-right: 1px solid #1e1e1e;
     display: flex;
-    align-items: flex-end;
-    gap: 14px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 4% 0 5%;
+    position: relative;
     flex-shrink: 0;
 }
-.station-label {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 0.12em;
+
+.label-small {
+    font-size: clamp(6px, 1vw, 9px);
+    color: #555;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    line-height: 1;
     margin-bottom: 3px;
-    display: block;
 }
-.station-name {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 26px;
-    color: var(--text);
-    line-height: 1;
-    letter-spacing: 0.02em;
+
+.cur-name {
+    font-size: clamp(13px, 2.2vw, 22px);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 4px;
+    word-break: break-word;
 }
-.station-code-badge {
+
+.cur-code {
+    display: inline-block;
     background: var(--ccl);
     color: #000;
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 14px;
-    padding: 4px 9px;
-    border-radius: 6px;
-    line-height: 1;
-    margin-bottom: 2px;
-    flex-shrink: 0;
+    font-size: clamp(8px, 1.1vw, 11px);
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
 }
-.station-interchanges {
+
+/* Door indicator */
+.door-wrap {
     display: flex;
+    align-items: center;
     gap: 5px;
-    margin-bottom: 2px;
-    flex-wrap: wrap;
+    margin-top: 4px;
 }
-.interchange-badge {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 11px;
-    padding: 3px 7px;
-    border-radius: 4px;
-    color: #fff;
-    line-height: 1;
-    white-space: nowrap;
-}
-.badge-nsl { background: var(--nsl); }
-.badge-nel { background: var(--nel); }
-.badge-ewl { background: var(--ewl); }
-.badge-dtl { background: var(--dtl); }
-.badge-tel { background: var(--tel); }
-.station-bar-right {
-    margin-left: auto;
-    text-align: right;
-    flex-shrink: 0;
-}
-.direction-label {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 11px;
-    color: var(--text-dim);
+.door-label {
+    font-size: clamp(5px, 0.85vw, 8px);
+    color: #444;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    display: block;
-    margin-bottom: 3px;
 }
-.direction-value {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 15px;
-    color: var(--ccl);
+.door-arrows {
+    display: flex;
+    gap: 3px;
+}
+.door-arrow {
+    width: clamp(10px, 1.6vw, 16px);
+    height: clamp(10px, 1.6vw, 16px);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    opacity: 0.2;
+    transition: opacity 0.2s;
+}
+.door-arrow.active {
+    opacity: 1;
+}
+.door-arrow svg {
+    width: 100%; height: 100%;
+}
+.door-left svg { fill: #2ecc40; }
+.door-right svg { fill: #2ecc40; }
+
+/* Interchange badges on left */
+.ix-row {
+    display: flex; flex-wrap: wrap; gap: 3px;
+    margin-top: 5px;
+}
+.ix-badge {
+    font-size: clamp(5px, 0.75vw, 7px);
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: #fff;
+    letter-spacing: 0.04em;
 }
 
-/* ── Route map area ── */
-.map-area {
-    padding: 22px 16px 18px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(248,151,29,0.2) transparent;
-    background: var(--screen-bg);
-    position: relative;
-}
-.map-scroll {
-    min-width: 900px;
-    position: relative;
+/* ── CENTRE panel: route map ── */
+.panel-centre {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--black);
+    padding: 0 8px;
+    overflow: hidden;
+    min-width: 0;
 }
 
-/* SVG route map */
-#routeMap {
+.map-viewport {
     width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+#routeSvg {
     display: block;
     overflow: visible;
 }
 
-/* ── Ticker ── */
-.ticker-wrap {
-    background: #111118;
-    border-top: 1px solid var(--screen-border);
-    height: 32px;
-    overflow: hidden;
+/* ── RIGHT panel: next station ── */
+.panel-right {
+    width: 28%;
+    background: #060606;
+    border-left: 1px solid #1e1e1e;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 4%;
     flex-shrink: 0;
-    position: relative;
 }
-.ticker-label {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 11px;
-    color: #000;
+
+.next-label {
+    font-size: clamp(6px, 1vw, 9px);
+    color: var(--ccl);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+.next-name {
+    font-size: clamp(13px, 2.2vw, 22px);
+    color: var(--ccl);
+    line-height: 1.15;
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+
+.next-code {
+    display: inline-block;
     background: var(--ccl);
-    padding: 0 10px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-}
-.ticker-track {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    overflow: hidden;
-    flex: 1;
-}
-.ticker-inner {
-    display: flex;
-    white-space: nowrap;
-    animation: tickerScroll 28s linear infinite;
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 13px;
-    color: rgba(255,255,255,0.85);
+    color: #000;
+    font-size: clamp(8px, 1.1vw, 11px);
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-bottom: 6px;
     letter-spacing: 0.04em;
+}
+
+/* Direction badge */
+.dir-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin-top: 4px;
+}
+.dir-arrow {
+    font-size: clamp(7px, 0.9vw, 9px);
+    color: var(--ccl);
+}
+.dir-text {
+    font-size: clamp(6px, 0.85vw, 8px);
+    color: #888;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ── BOTTOM ticker ── */
+.ticker-bar {
+    height: clamp(16px, 2.5vw, 22px);
+    background: #0d0d0d;
+    border-top: 1px solid #1c1c1c;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.ticker-tag {
+    background: var(--ccl);
+    color: #000;
+    font-size: clamp(6px, 0.9vw, 9px);
+    padding: 0 8px;
+    height: 100%;
+    display: flex; align-items: center;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ticker-track {
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
+    display: flex; align-items: center;
+}
+
+.ticker-inner {
+    white-space: nowrap;
+    font-size: clamp(6px, 0.9vw, 9px);
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.06em;
+    animation: tick 30s linear infinite;
     will-change: transform;
+    padding-left: 20px;
 }
-.ticker-inner span {
-    padding: 0 32px 0 0;
-}
-@keyframes tickerScroll {
+
+@keyframes tick {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
 
-/* ── Controls panel ── */
-.controls {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.control-row {
+/* ── Blinking dot ── */
+.blink { animation: blink 0.9s step-start infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* CCL capslet in centre top */
+.map-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.control-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    min-width: 110px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 2px;
+    margin-bottom: 4px;
     flex-shrink: 0;
 }
-.btn-group {
+.capslet {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: var(--ccl);
+    color: #000;
+    font-size: clamp(6px, 0.9vw, 9px);
+    padding: 2px 6px 2px 3px;
+    border-radius: 20px;
+    line-height: 1;
+}
+.capslet-dot {
+    width: clamp(10px, 1.4vw, 14px);
+    height: clamp(10px, 1.4vw, 14px);
+    background: #000;
+    color: var(--ccl);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(5px, 0.7vw, 7px);
+    flex-shrink: 0;
+}
+.map-clock {
+    font-size: clamp(8px, 1.2vw, 12px);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════
+   CONTROLS (outside screen)
+══════════════════════════════════════ */
+.controls {
+    width: 100%;
+    max-width: 960px;
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-.ctrl-btn {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 7px 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-}
-.ctrl-btn:hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-}
-.ctrl-btn.active {
-    background: var(--ccl);
-    color: #000;
-    border-color: var(--ccl);
-}
-.ctrl-btn.station-btn {
-    font-family: 'LTAIdentity', sans-serif;
-    font-size: 12px;
-    font-weight: normal;
-    padding: 6px 11px;
-}
-.ctrl-btn.station-btn.active {
-    background: var(--ccl);
-    color: #000;
-    border-color: var(--ccl);
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Location badge */
-.location-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 7px 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
-    cursor: pointer;
-    transition: all 0.15s;
-}
-.location-badge:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.location-badge.active-intrain { background: rgba(248,151,29,0.15); color: var(--ccl); border-color: var(--ccl); }
-.location-badge.active-instation { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.3); }
-.location-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.4s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* ── In-station overlay ── */
-.instation-panel {
-    display: none;
-    padding: 14px 18px;
-    border-top: 1px solid var(--screen-border);
-    background: #0f0f1c;
-    font-family: 'LTAIdentity', sans-serif;
-}
-.instation-panel.visible { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.instation-title { font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
-.instation-name { font-size: 20px; color: var(--text); }
-.door-indicator {
-    margin-left: auto;
+.ctrl-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    color: var(--text-dim);
-}
-.door-side {
-    background: var(--ccl);
-    color: #000;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 9px;
-    border-radius: 5px;
-    letter-spacing: 0.05em;
+    flex-wrap: wrap;
 }
 
-@media (max-width: 600px) {
-    .station-name { font-size: 18px; }
-    .control-label { min-width: 80px; }
-    .ctrl-btn { font-size: 11px; padding: 6px 10px; }
+.ctrl-lbl {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    min-width: 100px;
+    flex-shrink: 0;
 }
+
+.btn-grp { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+.btn:hover { background: #242424; color: #bbb; }
+.btn.on { background: var(--ccl); color: #000; border-color: var(--ccl); }
+
+.station-scroll {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.sbtn {
+    font-family: 'LTAIdentity', sans-serif;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #2a2a2a;
+    background: #141414;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+.sbtn:hover { background: #1e1e1e; color: #aaa; }
+.sbtn.on { background: var(--ccl); color: #000; border-color: var(--ccl); }
 </style>
 </head>
 <body>
-<div class="page">
 
-    <!-- ── SCREEN SHELL ── -->
-    <div class="screen-shell">
+<!-- ══ BEZEL + SCREEN ══ -->
+<div class="bezel">
+  <div class="screen">
 
-        <!-- Top bar -->
-        <div class="top-bar">
-            <div class="top-bar-left">
-                <div class="capslet">
-                    <div class="capslet-dot">CC</div>
-                    Circle Line
-                </div>
-                <span class="line-name">SMRT Trains</span>
+    <!-- Body: 3 columns -->
+    <div class="screen-body">
+
+      <!-- LEFT: current station -->
+      <div class="panel-left" id="panelLeft">
+        <div class="label-small" id="leftLabel">CURRENT STATION</div>
+        <div class="cur-name" id="curName">Dhoby Ghaut</div>
+        <div class="cur-code" id="curCode">CC1</div>
+        <div class="ix-row" id="curIx"></div>
+        <div class="door-wrap">
+          <span class="door-label">DOORS</span>
+          <div class="door-arrows">
+            <div class="door-arrow door-left" id="doorLeft">
+              <svg viewBox="0 0 10 10"><polygon points="8,1 2,5 8,9"/></svg>
             </div>
-            <div class="clock" id="clock">00:00</div>
+            <div class="door-arrow door-right" id="doorRight">
+              <svg viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9"/></svg>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Station info bar -->
-        <div class="station-bar">
-            <div>
-                <span class="station-label">Next Station</span>
-                <div class="station-name" id="nextStationName">Dhoby Ghaut</div>
-            </div>
-            <div class="station-code-badge" id="nextStationCode">CC1</div>
-            <div class="station-interchanges" id="nextInterchanges"></div>
-            <div class="station-bar-right">
-                <span class="direction-label">Direction</span>
-                <div class="direction-value" id="directionValue">Clockwise</div>
-            </div>
+      <!-- CENTRE: route map -->
+      <div class="panel-centre">
+        <div class="map-header">
+          <div class="capslet">
+            <div class="capslet-dot">CC</div>
+            Circle Line
+          </div>
+          <div class="map-clock" id="clock">00:00</div>
         </div>
-
-        <!-- Route map -->
-        <div class="map-area">
-            <div class="map-scroll">
-                <svg id="routeMap" viewBox="0 0 940 130" xmlns="http://www.w3.org/2000/svg"></svg>
-            </div>
+        <div class="map-viewport">
+          <svg id="routeSvg" viewBox="0 0 520 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;"></svg>
         </div>
+      </div>
 
-        <!-- In-station panel -->
-        <div class="instation-panel" id="instationPanel">
-            <div>
-                <div class="instation-title">You are at</div>
-                <div class="instation-name" id="instationName">–</div>
-            </div>
-            <div class="door-indicator">
-                Doors open on
-                <span class="door-side" id="doorSide">LEFT</span>
-            </div>
+      <!-- RIGHT: next station -->
+      <div class="panel-right">
+        <div class="next-label">NEXT STATION</div>
+        <div class="next-name" id="nextName">Bras Basah</div>
+        <div class="next-code" id="nextCode">CC2</div>
+        <div class="ix-row" id="nextIx"></div>
+        <div class="dir-badge">
+          <span class="dir-arrow" id="dirArrow">→</span>
+          <span class="dir-text" id="dirText">Clockwise</span>
         </div>
+      </div>
 
-        <!-- Ticker -->
-        <div class="ticker-wrap">
-            <div class="ticker-label">SMRT</div>
-            <div class="ticker-track">
-                <div class="ticker-inner" id="tickerInner">
-                    <span id="tickerText"></span>
-                    <span id="tickerTextDupe"></span>
-                </div>
-            </div>
-        </div>
+    </div><!-- /screen-body -->
 
-    </div><!-- /screen-shell -->
-
-    <!-- ── CONTROLS ── -->
-    <div class="controls">
-
-        <!-- Text on Screen -->
-        <div class="control-row">
-            <span class="control-label">Text on Screen</span>
-            <div class="btn-group" id="textBtns">
-                <button class="ctrl-btn active" data-text="station">Station Name</button>
-                <button class="ctrl-btn" data-text="courtesy">Courtesy</button>
-                <button class="ctrl-btn" data-text="gap">Mind the Gap</button>
-            </div>
-        </div>
-
-        <!-- Current station selector -->
-        <div class="control-row">
-            <span class="control-label">Current Station</span>
-            <div class="btn-group" id="stationBtns" style="max-height:120px;overflow-y:auto;padding:2px;"></div>
-        </div>
-
-        <!-- Direction -->
-        <div class="control-row">
-            <span class="control-label">Direction</span>
-            <div class="btn-group">
-                <button class="ctrl-btn active" id="btnCW" onclick="setDirection('cw')">Clockwise</button>
-                <button class="ctrl-btn" id="btnCCW" onclick="setDirection('ccw')">Anticlockwise</button>
-            </div>
-        </div>
-
-        <!-- Location -->
-        <div class="control-row">
-            <span class="control-label">Location</span>
-            <div class="btn-group">
-                <button class="location-badge active-intrain" id="btnIntrain" onclick="setLocation('intrain')">
-                    <span class="location-dot"></span> In-train
-                </button>
-                <button class="location-badge" id="btnInstation" onclick="setLocation('instation')">
-                    <span class="location-dot"></span> In-station
-                </button>
-            </div>
-        </div>
-
+    <!-- TICKER -->
+    <div class="ticker-bar">
+      <div class="ticker-tag">SMRT</div>
+      <div class="ticker-track">
+        <div class="ticker-inner" id="tickerInner">—</div>
+      </div>
     </div>
 
-</div><!-- /page -->
+  </div><!-- /screen -->
+</div><!-- /bezel -->
+
+<!-- ══ CONTROLS ══ -->
+<div class="controls">
+
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Station</span>
+    <div class="station-scroll" id="stationBtns"></div>
+  </div>
+
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Direction</span>
+    <div class="btn-grp">
+      <button class="btn on"  id="btnCW"  onclick="setDir('cw')">⟳ Clockwise</button>
+      <button class="btn"     id="btnCCW" onclick="setDir('ccw')">⟲ Anticlockwise</button>
+    </div>
+  </div>
+
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Location</span>
+    <div class="btn-grp">
+      <button class="btn on"  id="btnTrain"   onclick="setLoc('train')">🚇 In-train</button>
+      <button class="btn"     id="btnStation" onclick="setLoc('station')">🚉 In-station</button>
+    </div>
+  </div>
+
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Screen text</span>
+    <div class="btn-grp" id="textBtns">
+      <button class="btn on"  data-t="station">Station</button>
+      <button class="btn"     data-t="courtesy">Courtesy</button>
+      <button class="btn"     data-t="gap">Mind the Gap</button>
+    </div>
+  </div>
+
+</div>
 
 <script>
-// ── CCL STATIONS ──
-// Loop: CC1→CC29→CC30→CC31→CC32→CC33→CC34→back to CC4 (Promenade)
-// Spur: CC1↔CC2↔CC3↔CC4
-// For the DRMD display we show a linear sequence starting from current station
-const STATIONS = [
-    { code:'CC1',  name:'Dhoby Ghaut',     ix:['NSL','NEL'] },
-    { code:'CC2',  name:'Bras Basah',      ix:[] },
-    { code:'CC3',  name:'Esplanade',       ix:[] },
-    { code:'CC4',  name:'Promenade',       ix:['DTL'] },
-    { code:'CC5',  name:'Nicoll Highway',  ix:[] },
-    { code:'CC6',  name:'Stadium',         ix:[] },
-    { code:'CC7',  name:'Mountbatten',     ix:[] },
-    { code:'CC8',  name:'Dakota',          ix:[] },
-    { code:'CC9',  name:'Paya Lebar',      ix:['EWL'] },
-    { code:'CC10', name:'MacPherson',      ix:['DTL'] },
-    { code:'CC11', name:'Tai Seng',        ix:[] },
-    { code:'CC12', name:'Bartley',         ix:[] },
-    { code:'CC13', name:'Serangoon',       ix:['NEL'] },
-    { code:'CC14', name:'Lorong Chuan',    ix:[] },
-    { code:'CC15', name:'Bishan',          ix:['NSL'] },
-    { code:'CC16', name:'Marymount',       ix:[] },
-    { code:'CC17', name:'Caldecott',       ix:['TEL'] },
-    { code:'CC19', name:'Botanic Gardens', ix:['DTL'] },
-    { code:'CC20', name:'Farrer Road',     ix:[] },
-    { code:'CC21', name:'Holland Village', ix:[] },
-    { code:'CC22', name:'Buona Vista',     ix:['EWL'] },
-    { code:'CC23', name:'one-north',       ix:[] },
-    { code:'CC24', name:'Kent Ridge',      ix:[] },
-    { code:'CC25', name:'Haw Par Villa',   ix:[] },
-    { code:'CC26', name:'Pasir Panjang',   ix:[] },
-    { code:'CC27', name:'Labrador Park',   ix:[] },
-    { code:'CC28', name:'Telok Blangah',   ix:[] },
-    { code:'CC29', name:'HarbourFront',    ix:['NEL'] },
-    { code:'CC30', name:'Keppel',          ix:[] },
-    { code:'CC31', name:'Cantonment',      ix:[] },
-    { code:'CC32', name:'Prince Edward Road', ix:[] },
-    { code:'CC33', name:'Marina Bay',      ix:['NSL','TEL'] },
-    { code:'CC34', name:'Bayfront',        ix:['DTL'] },
+// ─────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────
+// CCL loop order (clockwise): CC1→CC34 then back to CC4 (Promenade)
+// Spur: CC1–CC2–CC3–CC4
+// We represent a flat array; navigation wraps CC34→CC4
+const S = [
+  {c:'CC1',  n:'Dhoby Ghaut',        ix:['NSL','NEL'], door:'L'},
+  {c:'CC2',  n:'Bras Basah',         ix:[],            door:'L'},
+  {c:'CC3',  n:'Esplanade',          ix:[],            door:'R'},
+  {c:'CC4',  n:'Promenade',          ix:['DTL'],       door:'L'},
+  {c:'CC5',  n:'Nicoll Highway',     ix:[],            door:'R'},
+  {c:'CC6',  n:'Stadium',            ix:[],            door:'L'},
+  {c:'CC7',  n:'Mountbatten',        ix:[],            door:'R'},
+  {c:'CC8',  n:'Dakota',             ix:[],            door:'L'},
+  {c:'CC9',  n:'Paya Lebar',         ix:['EWL'],       door:'R'},
+  {c:'CC10', n:'MacPherson',         ix:['DTL'],       door:'L'},
+  {c:'CC11', n:'Tai Seng',           ix:[],            door:'R'},
+  {c:'CC12', n:'Bartley',            ix:[],            door:'L'},
+  {c:'CC13', n:'Serangoon',          ix:['NEL'],       door:'R'},
+  {c:'CC14', n:'Lorong Chuan',       ix:[],            door:'L'},
+  {c:'CC15', n:'Bishan',             ix:['NSL'],       door:'R'},
+  {c:'CC16', n:'Marymount',          ix:[],            door:'L'},
+  {c:'CC17', n:'Caldecott',          ix:['TEL'],       door:'R'},
+  {c:'CC19', n:'Botanic Gardens',    ix:['DTL'],       door:'L'},
+  {c:'CC20', n:'Farrer Road',        ix:[],            door:'R'},
+  {c:'CC21', n:'Holland Village',    ix:[],            door:'L'},
+  {c:'CC22', n:'Buona Vista',        ix:['EWL'],       door:'R'},
+  {c:'CC23', n:'one-north',          ix:[],            door:'L'},
+  {c:'CC24', n:'Kent Ridge',         ix:[],            door:'R'},
+  {c:'CC25', n:'Haw Par Villa',      ix:[],            door:'L'},
+  {c:'CC26', n:'Pasir Panjang',      ix:[],            door:'R'},
+  {c:'CC27', n:'Labrador Park',      ix:[],            door:'L'},
+  {c:'CC28', n:'Telok Blangah',      ix:[],            door:'R'},
+  {c:'CC29', n:'HarbourFront',       ix:['NEL'],       door:'L'},
+  {c:'CC30', n:'Keppel',             ix:[],            door:'R'},
+  {c:'CC31', n:'Cantonment',         ix:[],            door:'L'},
+  {c:'CC32', n:'Prince Edward Road', ix:[],            door:'R'},
+  {c:'CC33', n:'Marina Bay',         ix:['NSL','TEL'], door:'L'},
+  {c:'CC34', n:'Bayfront',           ix:['DTL'],       door:'R'},
 ];
 
-const IX_CLASS = { NSL:'badge-nsl', NEL:'badge-nel', EWL:'badge-ewl', DTL:'badge-dtl', TEL:'badge-tel' };
-const IX_LABEL = { NSL:'NSL', NEL:'NEL', EWL:'EWL', DTL:'DTL', TEL:'TEL' };
+const IX_COL = {NSL:'#e01a22',NEL:'#8b1693',EWL:'#009645',DTL:'#005da9',TEL:'#784008'};
 
-// ── State ──
-let currentIdx  = 0;   // index in STATIONS for current (prev) station
-let direction   = 'cw'; // 'cw' | 'ccw'
-let location    = 'intrain'; // 'intrain' | 'instation'
-let textMode    = 'station'; // 'station' | 'courtesy' | 'gap'
-let animOffset  = 0;   // 0–1 progress between current and next
-let animRAF     = null;
-let lastTS      = null;
-const TRAVEL_MS = 4000; // ms per segment
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let curIdx    = 0;
+let dir       = 'cw';
+let loc       = 'train';   // 'train' | 'station'
+let textMode  = 'station';
+let animPct   = 0;         // 0..1 progress cur→next
+let lastT     = null;
+const TRAVEL  = 4500;      // ms per segment
+const VISIBLE = 11;        // stations visible at once (5 behind, cur, 5 ahead)
+const BEHIND  = 5;
 
-// ── Helpers ──
-function nextIdx(idx, dir) {
-    // On the loop: CC1(0)…CC34(32), wraps. After CC34 comes CC4(3) again.
-    if (dir === 'cw') {
-        // After CC34 (index 32) → back to CC4 (index 3)
-        if (idx === 32) return 3;
-        return (idx + 1) % STATIONS.length;
+// ─────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────
+function nxt(i, d) {
+    // CW: after CC34(idx 32) → CC4(idx 3)
+    // CCW: before CC4(idx 3) → CC34(idx 32)
+    if (d === 'cw') {
+        if (i === S.length - 1) return 3; // CC34 → CC4 (Promenade)
+        return (i + 1) % S.length;
     } else {
-        // Anticlockwise: CC4(3) → CC34(32)
-        if (idx === 3) return 32;
-        return (idx - 1 + STATIONS.length) % STATIONS.length;
+        if (i === 3) return S.length - 1; // CC4 → CC34
+        return (i - 1 + S.length) % S.length;
     }
 }
+function prev(i, d) { return nxt(i, d === 'cw' ? 'ccw' : 'cw'); }
+function getNext() { return S[nxt(curIdx, dir)]; }
+function getCur()  { return S[curIdx]; }
 
-function getNextStation() { return STATIONS[nextIdx(currentIdx, direction)]; }
-function getCurrentStation() { return STATIONS[currentIdx]; }
-
-// ── Clock ──
-function updateClock() {
-    const now = new Date();
-    const h = now.getHours().toString().padStart(2,'0');
-    const m = now.getMinutes().toString().padStart(2,'0');
-    document.getElementById('clock').textContent = `${h}:${m}`;
+// ─────────────────────────────────────────
+// CLOCK
+// ─────────────────────────────────────────
+function tickClock() {
+    const n = new Date();
+    document.getElementById('clock').textContent =
+        n.getHours().toString().padStart(2,'0') + ':' +
+        n.getMinutes().toString().padStart(2,'0');
 }
-updateClock();
-setInterval(updateClock, 10000);
+tickClock();
+setInterval(tickClock, 10000);
 
-// ── Station info bar ──
-function updateStationBar() {
-    const next = getNextStation();
-    const cur  = getCurrentStation();
+// ─────────────────────────────────────────
+// UI UPDATE
+// ─────────────────────────────────────────
+function updateUI() {
+    const cur  = getCur();
+    const next = getNext();
+    const isStation = loc === 'station';
 
-    // Text mode
-    const nameEl = document.getElementById('nextStationName');
-    if (textMode === 'station') {
-        nameEl.textContent = location === 'instation' ? cur.name : next.name;
-        nameEl.style.color = '#fff';
-    } else if (textMode === 'courtesy') {
-        nameEl.textContent = 'Please give up your seat to those in need.';
-        nameEl.style.color = 'rgba(255,255,255,0.85)';
-        nameEl.style.fontSize = '14px';
+    // LEFT: current station (or "THIS STATION" when in-station)
+    document.getElementById('leftLabel').textContent = isStation ? 'THIS STATION' : 'CURRENT STATION';
+    document.getElementById('curName').textContent   = cur.n;
+    document.getElementById('curCode').textContent   = cur.c;
+    renderIx('curIx', cur.ix);
+
+    // Door indicator
+    const dl = document.getElementById('doorLeft');
+    const dr = document.getElementById('doorRight');
+    if (isStation) {
+        // In-station: show door side with blink
+        dl.classList.toggle('active', cur.door === 'L');
+        dr.classList.toggle('active', cur.door === 'R');
+        dl.classList.toggle('blink',  cur.door === 'L');
+        dr.classList.toggle('blink',  cur.door === 'R');
     } else {
-        nameEl.textContent = 'Please mind the platform gap.';
-        nameEl.style.color = 'rgba(255,255,255,0.85)';
-        nameEl.style.fontSize = '14px';
+        // In-train travelling: show upcoming door side
+        dl.classList.toggle('active', next.door === 'L');
+        dr.classList.toggle('active', next.door === 'R');
+        dl.classList.toggle('blink',  next.door === 'L');
+        dr.classList.toggle('blink',  next.door === 'R');
     }
-    if (textMode === 'station') nameEl.style.fontSize = '';
 
-    const station = location === 'instation' ? cur : next;
-    document.getElementById('nextStationCode').textContent = station.code;
+    // RIGHT: next station
+    document.getElementById('nextName').textContent = isStation ? next.n : next.n;
+    document.getElementById('nextCode').textContent = next.c;
+    renderIx('nextIx', next.ix);
 
-    const ixWrap = document.getElementById('nextInterchanges');
-    ixWrap.innerHTML = '';
-    station.ix.forEach(line => {
+    // Direction
+    document.getElementById('dirArrow').textContent = dir === 'cw' ? '→' : '←';
+    document.getElementById('dirText').textContent  = dir === 'cw' ? 'Clockwise' : 'Anticlockwise';
+
+    // Ticker
+    updateTicker();
+}
+
+function renderIx(elId, ixArr) {
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    ixArr.forEach(l => {
         const b = document.createElement('span');
-        b.className = `interchange-badge ${IX_CLASS[line]}`;
-        b.textContent = IX_LABEL[line];
-        ixWrap.appendChild(b);
+        b.className = 'ix-badge';
+        b.style.background = IX_COL[l] || '#555';
+        b.textContent = l;
+        el.appendChild(b);
     });
-
-    document.getElementById('directionValue').textContent =
-        direction === 'cw' ? 'Clockwise' : 'Anticlockwise';
-
-    // In-station panel
-    const panel = document.getElementById('instationPanel');
-    if (location === 'instation') {
-        panel.classList.add('visible');
-        document.getElementById('instationName').textContent = cur.name;
-        // Alternate door sides for fun
-        document.getElementById('doorSide').textContent = currentIdx % 2 === 0 ? 'LEFT' : 'RIGHT';
-    } else {
-        panel.classList.remove('visible');
-    }
 }
 
-// ── Ticker ──
-const TICKER_TEXTS = {
+// ─────────────────────────────────────────
+// TICKER
+// ─────────────────────────────────────────
+const TICKERS = {
     station: () => {
-        const next = getNextStation();
-        const cur  = getCurrentStation();
-        return location === 'instation'
-            ? `You are at ${cur.name} (${cur.code}).  Next station: ${next.name} (${next.code}).  This is a ${direction === 'cw' ? 'Clockwise' : 'Anticlockwise'} Circle Line service.  `
-            : `Next station: ${next.name} (${next.code}).  Alight here for ${next.ix.length ? next.ix.join(', ') + ' interchange.' : 'exit.'}  This train is travelling ${direction === 'cw' ? 'Clockwise' : 'Anticlockwise'}.  `;
+        const cur = getCur(), next = getNext();
+        const d   = dir === 'cw' ? 'Clockwise' : 'Anticlockwise';
+        return loc === 'station'
+            ? `You are now at ${cur.n} (${cur.c}).  Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}.  Next station: ${next.n} (${next.c}).  This is a ${d} Circle Line service.  `
+            : `The next station is ${next.n} (${next.c}).  Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}.  This is a ${d} Circle Line service.  `;
     },
-    courtesy: () => `Please give up your seat to the elderly, pregnant women, and passengers with young children.  Thank you for your courtesy.  请给老人、孕妇及带幼儿的乘客让座。谢谢您的谦让。  `,
-    gap:      () => `Please mind the gap between the train and the platform.  请注意列车与月台之间的间隙。  Watch your step when boarding and alighting.  `,
+    courtesy: () =>
+        `Please give up your seat to those who need it more — the elderly, pregnant women, people with disabilities, and passengers with young children.  ` +
+        `请给老人、孕妇、残障人士及带小孩的乘客让座。谢谢。  ` +
+        `பெரியவர்கள், கர்ப்பிணிகள், மற்றும் குழந்தைகளுடன் இருப்பவர்களுக்கு இடம் கொடுங்கள்.  `,
+    gap: () =>
+        `Please mind the gap between the train and the platform edge.  请注意列车与月台之间的空隙。  பயணிகள், ரயிலுக்கும் மேடைக்கும் இடையே உள்ள இடைவெளியில் கவனமாக இருங்கள்.  `,
 };
 
 function updateTicker() {
-    const text = TICKER_TEXTS[textMode]();
-    const doubled = text + text;
-    document.getElementById('tickerText').textContent = doubled;
-    document.getElementById('tickerTextDupe').textContent = '';
-    // Reset animation
-    const inner = document.getElementById('tickerInner');
-    inner.style.animation = 'none';
-    inner.offsetWidth; // reflow
-    inner.style.animation = '';
+    const t = TICKERS[textMode]();
+    const full = t + t; // double for seamless loop
+    document.getElementById('tickerInner').textContent = full;
+    const el = document.getElementById('tickerInner');
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
 }
 
-// ── Route map ── 
-const MAP_W = 940;
-const MAP_H = 130;
-const STATION_Y = 65;
-const DOT_R = 7;
-const VISIBLE = 9; // stations shown at once
+// ─────────────────────────────────────────
+// SVG ROUTE MAP
+// ─────────────────────────────────────────
+const SVG_W  = 520;
+const SVG_H  = 60;
+const LINE_Y = 30;
+const STEP   = SVG_W / (VISIBLE + 1);  // spacing between dots
+const START  = STEP;
+const DOT_R  = 4.5;
+const CCL_COL = '#f99d25';
+
+function svgEl(tag, attrs) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+}
 
 function buildMap() {
-    const svg = document.getElementById('routeMap');
+    const svg = document.getElementById('routeSvg');
     svg.innerHTML = '';
-    svg.setAttribute('viewBox', `0 0 ${MAP_W} ${MAP_H}`);
 
-    // Build visible window: 4 behind current, current, 4 ahead (or CCW equivalent)
-    const BEHIND = 4;
-    const AHEAD  = VISIBLE - BEHIND - 1; // 4
-
-    // Collect stations to show: go back BEHIND, then forward AHEAD from current
-    const indices = [];
-    let tmp = currentIdx;
-    for (let i = 0; i < BEHIND; i++) {
-        tmp = nextIdx(tmp, direction === 'cw' ? 'ccw' : 'cw');
-    }
+    // Build window of VISIBLE stations centred on current
+    const window_ = [];
+    let tmp = curIdx;
+    for (let i = 0; i < BEHIND; i++) tmp = prev(tmp, dir);
     for (let i = 0; i < VISIBLE; i++) {
-        indices.push(tmp);
-        tmp = nextIdx(tmp, direction);
+        window_.push(tmp);
+        tmp = nxt(tmp, dir);
     }
+    // curIdx is at position BEHIND in window_
 
-    const STEP  = MAP_W / (VISIBLE - 1 + 1); // spacing
-    const START = STEP * 0.5;
-
-    // Positions
-    const positions = indices.map((si, i) => ({
+    const positions = window_.map((si, i) => ({
         x: START + i * STEP,
-        y: STATION_Y,
-        idx: si,
-        st: STATIONS[si],
+        y: LINE_Y,
+        si, st: S[si],
+        isCur:  i === BEHIND,
+        isPast: i < BEHIND,
+        isNext: i === BEHIND + 1,
     }));
 
-    // ── Track line ──
+    // ── Track lines ──
+    // Full dim track first
     for (let i = 0; i < positions.length - 1; i++) {
-        const a = positions[i];
-        const b = positions[i+1];
-        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-        line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
-        line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
-        line.setAttribute('stroke', '#2a2a3a');
-        line.setAttribute('stroke-width', '6');
-        line.setAttribute('stroke-linecap', 'round');
-        svg.appendChild(line);
+        const a = positions[i], b = positions[i+1];
+        svg.appendChild(svgEl('line', {
+            x1:a.x, y1:LINE_Y, x2:b.x, y2:LINE_Y,
+            stroke:'#222', 'stroke-width':'3', 'stroke-linecap':'round'
+        }));
     }
 
-    // ── Animated train segment (between current and next) ──
-    // current is at index BEHIND in positions[]
+    // Train x position
     const curPos  = positions[BEHIND];
     const nextPos = positions[BEHIND + 1];
-    const trainX  = curPos.x + (nextPos.x - curPos.x) * animOffset;
+    const trainX  = curPos.x + (nextPos.x - curPos.x) * animPct;
 
-    // Filled track up to train
+    // Lit track: past segments + current segment up to train
     for (let i = 0; i < positions.length - 1; i++) {
-        const a = positions[i];
-        const b = positions[i+1];
-        const isPassedSeg = i < BEHIND;
-        const isCurrentSeg = i === BEHIND;
-        if (!isPassedSeg && !isCurrentSeg) continue;
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-        if (isCurrentSeg) {
-            line.setAttribute('x1', a.x);
-            line.setAttribute('y1', a.y);
-            line.setAttribute('x2', trainX);
-            line.setAttribute('y2', a.y);
-        } else {
-            line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
-            line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
-        }
-        line.setAttribute('stroke', '#f8971d55');
-        line.setAttribute('stroke-width', '6');
-        line.setAttribute('stroke-linecap', 'round');
-        svg.appendChild(line);
+        const a = positions[i], b = positions[i+1];
+        if (i > BEHIND) continue; // only behind and current seg
+        const x2 = (i === BEHIND) ? trainX : b.x;
+        svg.appendChild(svgEl('line', {
+            x1:a.x, y1:LINE_Y, x2, y2:LINE_Y,
+            stroke: i < BEHIND ? '#333' : CCL_COL,
+            'stroke-width':'3', 'stroke-linecap':'round',
+            opacity: i < BEHIND ? '0.5' : '1',
+        }));
     }
 
-    // ── Station dots + labels ──
-    positions.forEach((p, i) => {
-        const isCurrent = i === BEHIND;
-        const isPast    = i < BEHIND;
-        const isNext    = i === BEHIND + 1;
+    // ── Dots + labels ──
+    positions.forEach(p => {
+        const {x, y, st, isCur, isPast, isNext} = p;
 
-        // Dot background (halo for next)
+        // Halo on next
         if (isNext) {
-            const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
-            halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
-            halo.setAttribute('r', DOT_R + 5);
-            halo.setAttribute('fill', 'rgba(248,151,29,0.12)');
-            svg.appendChild(halo);
+            svg.appendChild(svgEl('circle', {
+                cx:x, cy:y, r: DOT_R + 5,
+                fill:'rgba(249,157,37,0.1)'
+            }));
         }
 
         // Dot
-        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
-        circle.setAttribute('r', isCurrent ? DOT_R + 2 : DOT_R);
-        if (isNext)         circle.setAttribute('fill', '#f8971d');
-        else if (isPast)    circle.setAttribute('fill', '#3a3a5a');
-        else                circle.setAttribute('fill', '#555577');
-        circle.setAttribute('stroke', isNext ? '#fff' : (isCurrent ? '#f8971d' : 'none'));
-        circle.setAttribute('stroke-width', '2');
-        svg.appendChild(circle);
+        const dotR  = isCur ? DOT_R + 2.5 : isNext ? DOT_R + 1 : DOT_R;
+        const dotFill = isCur  ? '#fff'
+                      : isNext ? CCL_COL
+                      : isPast ? '#2a2a2a'
+                      :          '#3a3a3a';
+        const dotStroke = isCur ? CCL_COL : isNext ? '#fff' : 'none';
+        svg.appendChild(svgEl('circle', {
+            cx:x, cy:y, r:dotR,
+            fill:dotFill,
+            stroke:dotStroke, 'stroke-width':'1.5'
+        }));
 
-        // Interchange rings
-        p.st.ix.forEach((line, ri) => {
-            const colors = { NSL:'#e01a22', NEL:'#8b1693', EWL:'#009645', DTL:'#005da9', TEL:'#784008' };
-            const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-            ring.setAttribute('cx', p.x + (DOT_R + 6 + ri * 14));
-            ring.setAttribute('cy', p.y);
-            ring.setAttribute('r', 5);
-            ring.setAttribute('fill', colors[line] || '#888');
-            ring.setAttribute('stroke', '#0d0d14');
-            ring.setAttribute('stroke-width', '1.5');
-            svg.appendChild(ring);
+        // Interchange colour dots (stacked below main dot)
+        st.ix.forEach((line, ri) => {
+            svg.appendChild(svgEl('circle', {
+                cx: x + (ri * 8) - (st.ix.length - 1) * 4,
+                cy: y + DOT_R + 5,
+                r: 3,
+                fill: IX_COL[line] || '#555',
+                stroke:'#0a0a0a', 'stroke-width':'1'
+            }));
         });
 
-        // Station code label (above)
-        const code = document.createElementNS('http://www.w3.org/2000/svg','text');
-        code.setAttribute('x', p.x);
-        code.setAttribute('y', p.y - DOT_R - 8);
-        code.setAttribute('text-anchor', 'middle');
-        code.setAttribute('font-family', 'LTAIdentity, sans-serif');
-        code.setAttribute('font-size', '10');
-        code.setAttribute('fill', isNext ? '#f8971d' : (isPast ? '#3a3a5a' : 'rgba(255,255,255,0.4)'));
-        code.textContent = p.st.code;
-        svg.appendChild(code);
+        // Code above dot
+        const codeEl = svgEl('text', {
+            x, y: y - DOT_R - 4,
+            'text-anchor':'middle',
+            'font-family':'LTAIdentity, sans-serif',
+            'font-size': isCur || isNext ? '6.5' : '5.5',
+            fill: isCur ? '#fff' : isNext ? CCL_COL : isPast ? '#333' : '#555',
+        });
+        codeEl.textContent = st.c;
+        svg.appendChild(codeEl);
 
-        // Station name label (below)
-        const name = document.createElementNS('http://www.w3.org/2000/svg','text');
-        name.setAttribute('x', p.x);
-        name.setAttribute('y', p.y + DOT_R + 16);
-        name.setAttribute('text-anchor', 'middle');
-        name.setAttribute('font-family', 'LTAIdentity, sans-serif');
-        name.setAttribute('font-size', isNext ? '13' : '11');
-        name.setAttribute('fill', isNext ? '#fff' : (isPast ? '#2a2a4a' : 'rgba(255,255,255,0.35)'));
-        name.setAttribute('font-weight', isNext ? '600' : 'normal');
-        // Wrap long names
-        const words = p.st.name.split(' ');
-        if (words.length > 2) {
-            const mid = Math.ceil(words.length / 2);
-            const t1 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-            t1.setAttribute('x', p.x); t1.setAttribute('dy', '0');
-            t1.textContent = words.slice(0, mid).join(' ');
-            const t2 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-            t2.setAttribute('x', p.x); t2.setAttribute('dy', '13');
-            t2.textContent = words.slice(mid).join(' ');
-            name.appendChild(t1);
-            name.appendChild(t2);
+        // Station name below dot (split long names)
+        const nameY   = y + DOT_R + 14;
+        const nameFill = isCur ? '#fff' : isNext ? CCL_COL : isPast ? '#282828' : '#444';
+        const nameSz   = isCur || isNext ? '6' : '5';
+        const words    = st.n.split(' ');
+        if (words.length <= 2) {
+            const el = svgEl('text', {
+                x, y: nameY,
+                'text-anchor':'middle',
+                'font-family':'LTAIdentity, sans-serif',
+                'font-size': nameSz,
+                fill: nameFill,
+            });
+            el.textContent = st.n;
+            svg.appendChild(el);
         } else {
-            name.textContent = p.st.name;
+            // Split into 2 lines
+            const mid = Math.ceil(words.length / 2);
+            [[words.slice(0, mid).join(' '), 0], [words.slice(mid).join(' '), 7]].forEach(([txt, dy]) => {
+                const el = svgEl('text', {
+                    x, y: nameY + dy,
+                    'text-anchor':'middle',
+                    'font-family':'LTAIdentity, sans-serif',
+                    'font-size': nameSz,
+                    fill: nameFill,
+                });
+                el.textContent = txt;
+                svg.appendChild(el);
+            });
         }
-        svg.appendChild(name);
     });
 
-    // ── Train marker ──
-    const trainG = document.createElementNS('http://www.w3.org/2000/svg','g');
-    // Shadow
-    const shadow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-    shadow.setAttribute('cx', trainX); shadow.setAttribute('cy', STATION_Y + 12);
-    shadow.setAttribute('rx', '14'); shadow.setAttribute('ry', '4');
-    shadow.setAttribute('fill', 'rgba(248,151,29,0.2)');
-    trainG.appendChild(shadow);
-    // Body
-    const trainBody = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    trainBody.setAttribute('x', trainX - 14); trainBody.setAttribute('y', STATION_Y - 11);
-    trainBody.setAttribute('width', '28'); trainBody.setAttribute('height', '14');
-    trainBody.setAttribute('rx', '4');
-    trainBody.setAttribute('fill', '#f8971d');
-    trainG.appendChild(trainBody);
-    // Window
-    const win = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    win.setAttribute('x', trainX - 9); win.setAttribute('y', STATION_Y - 8);
-    win.setAttribute('width', '18'); win.setAttribute('height', '8');
-    win.setAttribute('rx', '2');
-    win.setAttribute('fill', 'rgba(0,0,0,0.4)');
-    trainG.appendChild(win);
-    svg.appendChild(trainG);
+    // ── Train icon ──
+    // Simple orange rectangle with a "window"
+    const tw = 18, th = 10;
+    svg.appendChild(svgEl('rect', {
+        x: trainX - tw/2, y: LINE_Y - th/2,
+        width: tw, height: th, rx:'2',
+        fill: CCL_COL,
+    }));
+    svg.appendChild(svgEl('rect', {
+        x: trainX - tw/2 + 3, y: LINE_Y - th/2 + 2,
+        width: tw - 6, height: th - 4, rx:'1',
+        fill:'rgba(0,0,0,0.45)',
+    }));
+    // Direction arrow on train
+    const arrowTxt = svgEl('text', {
+        x: trainX, y: LINE_Y + 1.5,
+        'text-anchor':'middle',
+        'dominant-baseline':'middle',
+        'font-size':'4.5',
+        fill:'rgba(255,255,255,0.7)',
+        'font-family':'sans-serif',
+    });
+    arrowTxt.textContent = dir === 'cw' ? '▶' : '◀';
+    svg.appendChild(arrowTxt);
 }
 
-// ── Animation loop ──
+// ─────────────────────────────────────────
+// ANIMATION
+// ─────────────────────────────────────────
 function animate(ts) {
-    if (!lastTS) lastTS = ts;
-    const dt = ts - lastTS;
-    lastTS = ts;
+    if (!lastT) lastT = ts;
+    const dt = ts - lastT;
+    lastT = ts;
 
-    animOffset += dt / TRAVEL_MS;
-    if (animOffset >= 1) {
-        animOffset = 0;
-        currentIdx = nextIdx(currentIdx, direction);
-        updateStationBar();
-        updateTicker();
-        updateStationButtons();
+    if (loc === 'train') {
+        animPct += dt / TRAVEL;
+        if (animPct >= 1) {
+            animPct = 0;
+            curIdx = nxt(curIdx, dir);
+            updateUI();
+            updateStationBtns();
+        }
     }
 
     buildMap();
-    animRAF = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 }
 
-function startAnimation() {
-    lastTS = null;
-    if (animRAF) cancelAnimationFrame(animRAF);
-    animRAF = requestAnimationFrame(animate);
+requestAnimationFrame(animate);
+
+// ─────────────────────────────────────────
+// CONTROLS
+// ─────────────────────────────────────────
+function setDir(d) {
+    dir = d;
+    lastT = null; animPct = 0;
+    document.getElementById('btnCW').classList.toggle('on', d === 'cw');
+    document.getElementById('btnCCW').classList.toggle('on', d === 'ccw');
+    updateUI();
 }
 
-// ── Direction ──
-function setDirection(dir) {
-    direction = dir;
-    document.getElementById('btnCW').classList.toggle('active', dir === 'cw');
-    document.getElementById('btnCCW').classList.toggle('active', dir === 'ccw');
-    updateStationBar();
-    updateTicker();
+function setLoc(l) {
+    loc = l;
+    animPct = 0; lastT = null;
+    document.getElementById('btnTrain').classList.toggle('on',   l === 'train');
+    document.getElementById('btnStation').classList.toggle('on', l === 'station');
+    updateUI();
 }
 
-// ── Location ──
-function setLocation(loc) {
-    location = loc;
-    document.getElementById('btnIntrain').className = 'location-badge' + (loc === 'intrain' ? ' active-intrain' : '');
-    document.getElementById('btnInstation').className = 'location-badge' + (loc === 'instation' ? ' active-instation' : '');
-    updateStationBar();
-    updateTicker();
-}
-
-// ── Text mode ──
 document.getElementById('textBtns').addEventListener('click', e => {
-    const btn = e.target.closest('[data-text]');
+    const btn = e.target.closest('[data-t]');
     if (!btn) return;
-    textMode = btn.dataset.text;
-    document.querySelectorAll('#textBtns .ctrl-btn').forEach(b => b.classList.toggle('active', b === btn));
-    updateStationBar();
+    textMode = btn.dataset.t;
+    document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
     updateTicker();
 });
 
-// ── Station buttons ──
-function buildStationButtons() {
+function buildStationBtns() {
     const wrap = document.getElementById('stationBtns');
     wrap.innerHTML = '';
-    STATIONS.forEach((st, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'ctrl-btn station-btn' + (i === currentIdx ? ' active' : '');
-        btn.textContent = `${st.code} ${st.name}`;
-        btn.addEventListener('click', () => {
-            currentIdx = i;
-            animOffset = 0;
-            lastTS = null;
-            updateStationBar();
-            updateTicker();
-            updateStationButtons();
-            buildMap();
+    S.forEach((st, i) => {
+        const b = document.createElement('button');
+        b.className = 'sbtn' + (i === curIdx ? ' on' : '');
+        b.textContent = `${st.c} ${st.n}`;
+        b.dataset.i = i;
+        b.addEventListener('click', () => {
+            curIdx = i; animPct = 0; lastT = null;
+            updateUI();
+            updateStationBtns();
         });
-        wrap.appendChild(btn);
+        wrap.appendChild(b);
     });
 }
 
-function updateStationButtons() {
-    document.querySelectorAll('#stationBtns .station-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', i === currentIdx);
+function updateStationBtns() {
+    document.querySelectorAll('#stationBtns .sbtn').forEach((b, i) => {
+        b.classList.toggle('on', i === curIdx);
     });
 }
 
-// ── Init ──
-buildStationButtons();
-updateStationBar();
-updateTicker();
-startAnimation();
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+buildStationBtns();
+updateUI();
 </script>
 </body>
 </html>
