@@ -25,24 +25,20 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-/* ═══════════════════════════════════════════════════
-   DRMD OUTER — metallic silver bezel
-═══════════════════════════════════════════════════ */
+/* ── Metallic bezel ── */
 .drmd-outer {
     width: 100%;
     max-width: 980px;
     background: linear-gradient(180deg, #c8caca 0%, #9fa3a3 40%, #b0b4b4 100%);
     border-radius: 10px;
-    padding: 5px 5px 6px 5px;
+    padding: 5px;
     box-shadow:
         0 4px 18px rgba(0,0,0,0.55),
         inset 0 1px 0 rgba(255,255,255,0.25),
         inset 0 -1px 0 rgba(0,0,0,0.3);
 }
 
-/* ═══════════════════════════════════════════════════
-   DRMD PANEL — white display surface
-═══════════════════════════════════════════════════ */
+/* ── White display panel ── */
 .drmd-panel {
     background: #edeeed;
     border-radius: 6px;
@@ -50,19 +46,19 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.10);
+    position: relative;
 }
 
-/* ── LED ticker strip ── */
+/* ── LED ticker ── */
 .led-outer {
     background-color: #050505;
     background-image:
-        repeating-linear-gradient(0deg,   transparent, transparent 3px, rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px),
-        repeating-linear-gradient(90deg,  transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
+        repeating-linear-gradient(0deg,  transparent, transparent 3px, rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
     height: 34px;
     display: flex;
     align-items: center;
     overflow: hidden;
-    position: relative;
     border-bottom: 1px solid #000;
 }
 .led-text {
@@ -72,13 +68,13 @@ body {
     white-space: nowrap;
     letter-spacing: 0.06em;
     line-height: 1;
-    text-shadow: 0 0 8px #b0d040, 0 0 2px #c8e87a, 0 0 18px rgba(180,220,60,0.35);
+    text-shadow: 0 0 8px #b0d040, 0 0 2px #c8e87a;
+    display: block;
     position: relative;
     z-index: 1;
     padding-left: 100%;
     animation: ledScroll 32s linear infinite;
     will-change: transform;
-    display: block;
 }
 .led-text.static {
     padding-left: 0;
@@ -91,53 +87,56 @@ body {
     to   { transform: translateX(-100%); }
 }
 
-/* ── Main row: door zones + route strip ── */
-.main-row {
+/* ── Map row: left zone + map + right zone ── */
+.map-row {
     display: flex;
     align-items: stretch;
-    flex: 1;
 }
 
-/* ── Door indicator zones ── */
-.door-zone {
+/* ── Left / Right edge zones ──
+   Contains: large downward triangle + small direction arrow */
+.edge-zone {
     flex-shrink: 0;
-    width: 62px;
+    width: 70px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 4px;
+    padding: 6px 4px;
 }
+
+/* Big downward-pointing ▼ door triangle */
 .door-tri {
     width: 0; height: 0;
+    border-left:  26px solid transparent;
+    border-right: 26px solid transparent;
+    border-top:   34px solid #39e030;
     opacity: 0.08;
     transition: opacity 0.15s, filter 0.15s;
     filter: drop-shadow(0 0 0px #39e030);
 }
 .door-tri.active {
     opacity: 1;
-    filter: drop-shadow(0 0 6px #39e030) drop-shadow(0 0 16px rgba(57,224,48,0.55));
+    filter: drop-shadow(0 0 8px #39e030) drop-shadow(0 0 18px rgba(57,224,48,0.5));
 }
 .door-tri.blink { animation: doorBlink 0.65s step-start infinite; }
 @keyframes doorBlink { 50% { opacity: 0; } }
-.door-zone.left  .door-tri {
-    border-top: 24px solid transparent;
-    border-bottom: 24px solid transparent;
-    border-right: 32px solid #39e030;
-}
-.door-zone.right .door-tri {
-    border-top: 24px solid transparent;
-    border-bottom: 24px solid transparent;
-    border-left: 32px solid #39e030;
+
+/* Small direction arrow below the triangle */
+.dir-arrow {
+    font-size: 14px;
+    font-weight: 700;
+    color: #555;
+    line-height: 1;
+    font-family: 'LTAIdentity', sans-serif;
 }
 
-/* ── Route strip area ── */
-.route-area {
+/* ── Centre map area ── */
+.map-area {
     flex: 1;
-    overflow: hidden;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 6px 0 8px 0;
+    overflow: hidden;
 }
 
 /* Capslet top-left */
@@ -182,35 +181,10 @@ body {
 }
 .legend-line { width: 12px; height: 3px; border-radius: 1.5px; flex-shrink: 0; }
 
-/* Orange diamond bottom-centre */
-.diamond-wrap {
-    position: absolute;
-    bottom: 4px; left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-}
-.diamond-wrap .diamond {
-    width: 11px; height: 11px;
-    background: #f99d25;
-    transform: rotate(45deg);
-    box-shadow: 0 0 5px rgba(249,157,37,0.8), 0 0 10px rgba(249,157,37,0.4);
-}
+/* SVG map fills the area */
+#mapSvg { display: block; width: 100%; }
 
-/* The scrollable SVG viewport */
-.route-svg-wrap {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-}
-#routeSvg {
-    display: block;
-    /* width set by JS to fit all stations */
-    transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* ═══════════════════════════════════════════════════
-   CONTROLS
-═══════════════════════════════════════════════════ */
+/* ── Controls ── */
 .controls {
     width: 100%; max-width: 980px;
     display: flex; flex-direction: column; gap: 10px;
@@ -231,7 +205,6 @@ body {
 }
 .btn:hover { background: #2a2a2a; color: #aaa; }
 .btn.on { background: #f99d25; color: #000; border-color: #f99d25; }
-
 .station-scroll {
     display: flex; gap: 5px; flex-wrap: wrap;
     max-height: 110px; overflow-y: auto; padding: 2px;
@@ -248,7 +221,6 @@ body {
 </head>
 <body>
 
-<!-- ═══════ DRMD PANEL ═══════ -->
 <div class="drmd-outer">
   <div class="drmd-panel">
 
@@ -257,39 +229,36 @@ body {
       <span class="led-text" id="ledText"></span>
     </div>
 
-    <!-- Main row -->
-    <div class="main-row">
+    <!-- Map row -->
+    <div class="map-row">
 
-      <!-- Left door triangle -->
-      <div class="door-zone left">
+      <!-- Left edge: door tri (▼) + direction arrow -->
+      <div class="edge-zone" id="edgeLeft">
         <div class="door-tri" id="triLeft"></div>
+        <div class="dir-arrow" id="arrowLeft"></div>
       </div>
 
-      <!-- Route strip -->
-      <div class="route-area">
+      <!-- CCL loop map -->
+      <div class="map-area">
         <div class="map-capslet">
           <div class="map-capslet-dot">CC</div>
           Circle Line
         </div>
         <div class="legend" id="legend"></div>
-
-        <div class="route-svg-wrap" id="routeWrap">
-          <svg id="routeSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-        </div>
-
-        <div class="diamond-wrap"><div class="diamond"></div></div>
+        <svg id="mapSvg" viewBox="0 0 800 195" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
 
-      <!-- Right door triangle -->
-      <div class="door-zone right">
+      <!-- Right edge: door tri (▼) + direction arrow -->
+      <div class="edge-zone" id="edgeRight">
         <div class="door-tri" id="triRight"></div>
+        <div class="dir-arrow" id="arrowRight"></div>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- ═══════ CONTROLS ═══════ -->
+<!-- Controls -->
 <div class="controls">
   <div class="ctrl-row">
     <span class="ctrl-lbl">Station</span>
@@ -322,11 +291,9 @@ body {
 </div>
 
 <script>
-// ═══════════════════════════════════════
-// STATION DATA
-// ═══════════════════════════════════════
-// CCL ordered clockwise: CC1 → CC34, with CC34 looping back to CC4
-// ix = interchange lines, door = which side opens
+// ═══════════════════════════
+// STATIONS (CCL clockwise order, CC18 doesn't exist)
+// ═══════════════════════════
 const CCL = [
     {c:'CC1',  n:'Dhoby Ghaut',        ix:['NSL','NEL'], door:'L'},
     {c:'CC2',  n:'Bras Basah',         ix:[],            door:'L'},
@@ -372,188 +339,212 @@ const LINE_COLORS = {
     TEL: '#784008',
 };
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
+// CCL LOOP POSITIONS
+// viewBox 0 0 800 195
+// The loop is an oval — top-right arc (CC1→CC17),
+// bottom arc (CC19→CC29), then right-side spur back up (CC30→CC34→CC4)
+// ═══════════════════════════
+const CCL_POS = {
+    // Top arc: CC1 (left-centre) clockwise around the top to CC17
+    CC1:  [190, 100],
+    CC2:  [218, 116],
+    CC3:  [244, 130],
+    CC4:  [268, 118],
+    CC5:  [291, 106],
+    CC6:  [314, 116],
+    CC7:  [330, 130],
+    CC8:  [344, 145],
+    CC9:  [355, 160],
+    CC10: [358, 175],
+    CC11: [352, 186],
+    CC12: [338, 191],
+    CC13: [320, 189],
+    CC14: [302, 183],
+    CC15: [282, 175],
+    CC16: [264, 163],
+    CC17: [248, 152],
+    // Skip CC18 (doesn't exist)
+    CC19: [220, 148],
+    CC20: [198, 148],
+    CC21: [176, 151],
+    CC22: [156, 146],
+    CC23: [138, 136],
+    CC24: [124, 122],
+    CC25: [113, 108],
+    CC26: [108,  93],
+    CC27: [110,  78],
+    CC28: [120,  65],
+    CC29: [136,  54],
+    // Spur: CC30→CC34 curving back up to close at CC4
+    CC30: [162,  48],
+    CC31: [188,  48],
+    CC32: [212,  50],
+    CC33: [232,  57],
+    CC34: [252,  68],
+};
+
+// ═══════════════════════════
 // STATE
-// ═══════════════════════════════════════
+// ═══════════════════════════
 let curIdx   = 0;
 let dir      = 'cw';
 let loc      = 'train';
 let textMode = 'station';
-let animPct  = 0;
 let lastT    = null;
-const TRAVEL = 5000; // ms between stations
+const TRAVEL = 5000;
 
 function nxtIdx(i, d) {
-    // Clockwise: wraps CC34 → CC4 (idx 3), not back to CC1
-    if (d === 'cw')  return i === CCL.length - 1 ? 3 : i + 1;
+    if (d === 'cw')  return i === CCL.length - 1 ? 3 : i + 1; // CC34 → CC4
     else             return i === 3 ? CCL.length - 1 : (i - 1 < 0 ? CCL.length - 1 : i - 1);
 }
 const getCur  = () => CCL[curIdx];
 const getNext = () => CCL[nxtIdx(curIdx, dir)];
 
-// ═══════════════════════════════════════
-// ROUTE STRIP — SVG layout constants
-// ═══════════════════════════════════════
-// The strip is drawn in a tall SVG viewBox.
-// Y-axis layout (top to bottom):
-//   arrow tip   → y=10
-//   arrow base  → y=22
-//   line centre → y=38
-//   dot centre  → y=38
-//   label top   → y=50
-//   ix dots row → y=52+ (below label for interchange)
-const STEP    = 34;   // px between station centres (horizontal)
-const PAD     = 20;   // left/right padding
-const LINE_Y  = 38;   // vertical centre of the route line
-const SVG_H   = 80;   // total SVG height
-const DOT_R   = 5;    // normal dot radius
-const IX_R    = 3;    // interchange dot radius
-const CUR_R   = 7;    // current station dot radius
-
+// ═══════════════════════════
+// SVG HELPER
+// ═══════════════════════════
 function svgEl(tag, attrs, txt) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
     if (txt !== undefined) el.textContent = txt;
     return el;
 }
 
-function buildRouteStrip() {
-    const svg   = document.getElementById('routeSvg');
-    const wrap  = document.getElementById('routeWrap');
-    const wrapW = wrap.clientWidth || 856;
-
-    const n     = CCL.length;
-    const totalW = PAD * 2 + (n - 1) * STEP;
-    const svgW   = Math.max(totalW, wrapW);
-
-    svg.setAttribute('viewBox', `0 0 ${svgW} ${SVG_H}`);
-    svg.setAttribute('width',   svgW);
-    svg.setAttribute('height',  SVG_H);
+// ═══════════════════════════
+// MAP
+// ═══════════════════════════
+function buildMap() {
+    const svg = document.getElementById('mapSvg');
     svg.innerHTML = '';
 
     const cur  = getCur();
     const next = getNext();
-    const ci   = curIdx; // current index in CCL[]
 
-    // ── Horizontal route line ──
-    // Draw in two passes: past (dimmed) and future (bright)
-    // For cw: stations 0..ci-1 are past, ci..n-1 are future
-    // We draw one dim segment from x[0] to x[ci],
-    // and one bright from x[ci] to x[n-1]
-    const xOf = i => PAD + i * STEP;
+    // ── Draw CCL loop segments ──
+    // Clockwise order: CC1→CC2→...→CC34, then CC34→CC4 closes the loop
+    const pts = CCL.map(s => CCL_POS[s.c]);
 
-    // Past segment (left of current)
-    if (ci > 0) {
+    for (let i = 0; i < pts.length - 1; i++) {
+        const [ax, ay] = pts[i];
+        const [bx, by] = pts[i + 1];
+        const isPast = dir === 'cw' ? i < curIdx : i > curIdx;
         svg.appendChild(svgEl('line', {
-            x1: xOf(0), y1: LINE_Y,
-            x2: xOf(dir === 'cw' ? ci : ci), y2: LINE_Y,
-            stroke: LINE_COLORS.CCL, 'stroke-width': '4',
-            'stroke-linecap': 'round', opacity: '0.22',
+            x1: ax, y1: ay, x2: bx, y2: by,
+            stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
+            'stroke-linecap': 'round',
+            opacity: isPast ? '0.22' : '1',
         }));
     }
-    // Future segment (right of current including current)
-    svg.appendChild(svgEl('line', {
-        x1: xOf(dir === 'cw' ? ci : 0), y1: LINE_Y,
-        x2: xOf(n - 1),                 y2: LINE_Y,
-        stroke: LINE_COLORS.CCL, 'stroke-width': '4',
-        'stroke-linecap': 'round', opacity: '1',
-    }));
+    // Close loop: CC34 → CC4
+    {
+        const [ax, ay] = CCL_POS['CC34'];
+        const [bx, by] = CCL_POS['CC4'];
+        svg.appendChild(svgEl('line', {
+            x1: ax, y1: ay, x2: bx, y2: by,
+            stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
+            'stroke-linecap': 'round', opacity: '1',
+        }));
+    }
 
-    // ── Stations ──
+    // ── Station dots + labels ──
     CCL.forEach((st, i) => {
-        const x      = xOf(i);
-        const isCur  = i === ci;
+        const [x, y] = CCL_POS[st.c];
+        const isCur  = i === curIdx;
         const isNext = st.c === next.c;
-        const isPast = dir === 'cw' ? i < ci : i > ci;
+        const isPast = dir === 'cw' ? i < curIdx : i > curIdx;
         const hasIx  = st.ix.length > 0;
-        const op     = isPast ? 0.25 : 1;
+        const op     = isPast && !isCur && !isNext ? '0.25' : '1';
 
-        // Station dot
-        const r     = isCur ? CUR_R : hasIx ? DOT_R + 1 : DOT_R;
-        const fill  = isCur ? LINE_COLORS.CCL : '#fff';
-        const sw    = isCur ? 0 : 1.5;
-        const sCol  = LINE_COLORS.CCL;
-
+        // Dot
+        const r    = isCur ? 7 : hasIx ? 5 : 3.5;
+        const fill = isCur ? LINE_COLORS.CCL : '#fff';
+        const sw   = isCur ? 0 : 1.5;
         svg.appendChild(svgEl('circle', {
-            cx: x, cy: LINE_Y, r,
-            fill, stroke: sCol, 'stroke-width': sw,
-            opacity: op,
+            cx: x, cy: y, r,
+            fill, stroke: LINE_COLORS.CCL, 'stroke-width': sw, opacity: op,
         }));
 
-        // Interchange colour blobs below the line
+        // Interchange colour dots
         if (hasIx) {
-            const blobY = LINE_Y + r + 4;
             st.ix.forEach((line, ri) => {
-                const bx = x + (ri - (st.ix.length - 1) / 2) * 7;
-                svg.appendChild(svgEl('rect', {
-                    x: bx - 5, y: blobY,
-                    width: 10, height: 5,
-                    rx: 2,
+                svg.appendChild(svgEl('circle', {
+                    cx: x + (ri - (st.ix.length - 1) / 2) * 7,
+                    cy: y + r + 5,
+                    r: '3',
                     fill: LINE_COLORS[line] || '#888',
+                    stroke: '#edeeed', 'stroke-width': '0.5',
                     opacity: op,
                 }));
             });
         }
 
-        // Station name label — below line
-        const labelY = LINE_Y + r + (hasIx ? 14 : 10);
-        svg.appendChild(svgEl('text', {
-            x, y: labelY,
-            'text-anchor': 'middle',
-            'font-family': 'LTAIdentity, sans-serif',
-            'font-size': isCur ? '6.5' : isNext ? '6' : '5.5',
-            'font-weight': isCur || isNext ? '700' : 'normal',
-            fill: isCur ? '#c97200' : isNext ? '#555' : '#666',
-            opacity: isPast ? '0.3' : '1',
-        }, st.n));
+        // Label (only for current, next, and interchange stations)
+        if (isCur || isNext || hasIx) {
+            // Decide label position: push away from centre of oval
+            // oval centre ≈ (230, 120)
+            const cx = 230, cy = 120;
+            const dx = x - cx, dy = y - cy;
+            const len = Math.sqrt(dx*dx + dy*dy) || 1;
+            const offset = r + (hasIx ? 11 : 8);
+            const lx = x + (dx / len) * offset;
+            const ly = y + (dy / len) * offset;
 
-        // Station code — above label for current/next only
-        if (isCur || isNext) {
             svg.appendChild(svgEl('text', {
-                x, y: labelY + 7,
+                x: lx, y: ly,
                 'text-anchor': 'middle',
+                'dominant-baseline': 'middle',
                 'font-family': 'LTAIdentity, sans-serif',
-                'font-size': '5',
-                fill: isCur ? '#c97200' : '#888',
-                opacity: '1',
-            }, st.c));
+                'font-size': isCur ? '7' : isNext ? '6.5' : '5.5',
+                'font-weight': isCur || isNext ? '700' : 'normal',
+                fill: isCur ? '#c97200' : isNext ? '#333' : '#444',
+                opacity: isPast && !isCur && !isNext ? '0.3' : '1',
+            }, st.n));
         }
 
-        // ▼ Downward arrow above current station
+        // ▼ Downward arrow above current station dot
         if (isCur) {
-            // Arrow: a downward-pointing triangle above the dot
-            const aw = 10, ah = 11;
-            const ay = LINE_Y - r - 3; // tip of arrow (bottom point)
+            // Triangle pointing DOWN, tip at top of the dot
+            const aw = 10, ah = 10;
+            // position it above the dot (in the direction away from centre)
+            const cx = 230, cy = 120;
+            const dx = x - cx, dy = y - cy;
+            const len = Math.sqrt(dx*dx + dy*dy) || 1;
+            // arrow sits just outside the dot on the outward side
+            const ax2 = x - (dx / len) * (r + 2);
+            const ay2 = y - (dy / len) * (r + 2);
+            // perpendicular
+            const px = -dy / len, py = dx / len;
+            // downward-pointing triangle: tip points toward dot
             svg.appendChild(svgEl('polygon', {
-                points: `${x},${ay} ${x - aw/2},${ay - ah} ${x + aw/2},${ay - ah}`,
+                points: [
+                    `${ax2},${ay2}`,
+                    `${ax2 - (dx/len)*ah + px*aw/2},${ay2 - (dy/len)*ah + py*aw/2}`,
+                    `${ax2 - (dx/len)*ah - px*aw/2},${ay2 - (dy/len)*ah - py*aw/2}`,
+                ].join(' '),
                 fill: LINE_COLORS.CCL,
-                opacity: '1',
             }));
         }
     });
-
-    // ── Pan SVG so current station is always centred in the viewport ──
-    const curX   = xOf(ci);
-    const offset = Math.max(0, Math.min(curX - wrapW / 2, svgW - wrapW));
-    svg.style.transform = `translateX(${-offset}px)`;
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
 // LED TEXT
-// ═══════════════════════════════════════
+// ═══════════════════════════
 const LED_TEXTS = {
     station: () => {
         const cur = getCur(), next = getNext();
-        return loc === 'station'
-            ? `Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station ${next.n} (${next.c})   ·   `
-            : `Next station ${next.n} (${next.c})   ·   Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
+        if (loc === 'station') {
+            return `Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station, ${next.n} (${next.c})   ·   `;
+        }
+        return `Next station, ${next.n} (${next.c})   ·   Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
     },
-    courtesy: () => `Please give up your seat to those who need it more — the elderly, pregnant women, and passengers with young children.   ·   请给有需要的乘客让座。   ·   `,
-    gap:      () => `Please mind the platform gap.   ·   请注意列车与站台之间的间隙。   ·   Watch your step.   ·   `,
-    closing:  () => `Doors closing   ·   Doors closing   ·   请关好门`,
+    courtesy: () => `Please give up your seat to those who need it more — the elderly, pregnant women, and passengers with young children.   ·   `,
+    gap:      () => `Please mind the platform gap.   ·   Watch your step.   ·   `,
+    closing:  () => `Doors closing`,
     terminus: () => {
         const next = getNext();
-        return `Next station ${next.n}. This train service ends here. Please alight immediately.   ·   下一站 ${next.n}。本次列车服务到站结束，请立即下车。   ·   `;
+        return `Next station, ${next.n}. This train service ends immediately, please alight immediately.   ·   `;
     },
 };
 
@@ -565,7 +556,7 @@ function updateLED() {
         el.style.animation = 'none';
     } else {
         const t = LED_TEXTS[textMode]();
-        el.textContent = t + '          ' + t; // gap between loops
+        el.textContent = t + t;
         el.classList.remove('static');
         el.style.animation = 'none';
         void el.offsetWidth;
@@ -573,23 +564,27 @@ function updateLED() {
     }
 }
 
-// ═══════════════════════════════════════
-// DOOR INDICATORS
-// ═══════════════════════════════════════
+// ═══════════════════════════
+// DOOR TRIANGLES + DIRECTION ARROWS
+// ═══════════════════════════
 function updateDoors() {
-    const st       = loc === 'station' ? getCur() : getNext();
-    const tL       = document.getElementById('triLeft');
-    const tR       = document.getElementById('triRight');
-    const atStn    = loc === 'station';
-    const isLeft   = st.door === 'L';
-    const isRight  = st.door === 'R';
+    const st     = loc === 'station' ? getCur() : getNext();
+    const atStn  = loc === 'station';
+    const isLeft = st.door === 'L';
+    const tL     = document.getElementById('triLeft');
+    const tR     = document.getElementById('triRight');
+
     tL.className = 'door-tri' + (isLeft  ? ' active' : '') + (isLeft  && atStn ? ' blink' : '');
-    tR.className = 'door-tri' + (isRight ? ' active' : '') + (isRight && atStn ? ' blink' : '');
+    tR.className = 'door-tri' + (!isLeft ? ' active' : '') + (!isLeft && atStn ? ' blink' : '');
+
+    // Direction arrows: CW = ↻ on right side, CCW = ↺ on left side
+    document.getElementById('arrowLeft').textContent  = dir === 'ccw' ? '↺' : '';
+    document.getElementById('arrowRight').textContent = dir === 'cw'  ? '↻' : '';
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
 // LEGEND
-// ═══════════════════════════════════════
+// ═══════════════════════════
 function buildLegend() {
     const el = document.getElementById('legend');
     el.innerHTML = '';
@@ -608,51 +603,54 @@ function buildLegend() {
     });
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
 // ANIMATION LOOP
-// ═══════════════════════════════════════
+// ═══════════════════════════
 function animate(ts) {
     if (!lastT) lastT = ts;
     const dt = ts - lastT;
     lastT = ts;
 
     if (loc === 'train' && textMode === 'station') {
-        animPct += dt / TRAVEL;
-        if (animPct >= 1) {
-            animPct = 0;
-            curIdx  = nxtIdx(curIdx, dir);
+        if (!animate._acc) animate._acc = 0;
+        animate._acc += dt;
+        if (animate._acc >= TRAVEL) {
+            animate._acc = 0;
+            curIdx = nxtIdx(curIdx, dir);
             updateDoors();
             updateLED();
             updateStationBtns();
-            buildRouteStrip();
+            buildMap();
         }
+    } else {
+        animate._acc = 0;
     }
     requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
 // CONTROLS
-// ═══════════════════════════════════════
+// ═══════════════════════════
 function setDir(d) {
-    dir = d; animPct = 0; lastT = null;
+    dir = d; lastT = null; animate._acc = 0;
     document.getElementById('btnCW').classList.toggle('on',  d === 'cw');
     document.getElementById('btnCCW').classList.toggle('on', d === 'ccw');
-    updateDoors(); updateLED(); buildRouteStrip();
+    updateDoors(); updateLED(); buildMap();
 }
 
 function setLoc(l) {
-    loc = l; animPct = 0; lastT = null;
+    loc = l; lastT = null; animate._acc = 0;
     document.getElementById('btnTrain').classList.toggle('on',   l === 'train');
     document.getElementById('btnStation').classList.toggle('on', l === 'station');
-    updateDoors(); updateLED(); buildRouteStrip();
+    updateDoors(); updateLED(); buildMap();
 }
 
 document.getElementById('textBtns').addEventListener('click', e => {
     const btn = e.target.closest('[data-t]');
     if (!btn) return;
     textMode = btn.dataset.t;
-    lastT = null;
+    lastT = null; animate._acc = 0;
     document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
     updateLED();
 });
@@ -664,8 +662,8 @@ function buildStationBtns() {
         b.className = 'sbtn' + (i === curIdx ? ' on' : '');
         b.textContent = `${st.c} ${st.n}`;
         b.addEventListener('click', () => {
-            curIdx = i; animPct = 0; lastT = null;
-            updateDoors(); updateLED(); updateStationBtns(); buildRouteStrip();
+            curIdx = i; lastT = null; animate._acc = 0;
+            updateDoors(); updateLED(); updateStationBtns(); buildMap();
         });
         wrap.appendChild(b);
     });
@@ -676,17 +674,14 @@ function updateStationBtns() {
     });
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════
 // INIT
-// ═══════════════════════════════════════
+// ═══════════════════════════
 buildLegend();
 buildStationBtns();
 updateDoors();
 updateLED();
-buildRouteStrip();
-
-// Rebuild on resize so panning recalculates
-window.addEventListener('resize', buildRouteStrip);
+buildMap();
 </script>
 </body>
 </html>
