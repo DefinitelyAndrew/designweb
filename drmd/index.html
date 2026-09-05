@@ -28,29 +28,41 @@ body {
 
 /* ═══════════════════════════════
    DISPLAY UNIT WRAPPER
-   Two panels side by side, mounted above door
+   Mimics the two physical panels mounted above the train door
 ═══════════════════════════════ */
 .display-unit {
     width: 100%;
     max-width: 980px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 /* ═══════════════════════════════
    TOP: LED TICKER STRIP
-   Black bg, green dot-matrix style text
+   Physical outer bezel + black screen with green dot-matrix text
 ═══════════════════════════════ */
+.led-outer {
+    background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 6px 10px;
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
 .led-strip {
-    background: #000;
-    border: 2px solid #111;
-    border-radius: 4px;
-    height: 36px;
+    background: #020202;
+    border: 1px solid #0a0a0a;
+    border-radius: 3px;
+    height: 38px;
     display: flex;
     align-items: center;
     overflow: hidden;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+    box-shadow:
+        inset 0 0 12px rgba(0,0,0,0.9),
+        inset 0 0 4px rgba(57,255,20,0.04);
     position: relative;
 }
 
@@ -62,24 +74,27 @@ body {
     background: repeating-linear-gradient(
         0deg,
         transparent,
-        transparent 3px,
-        rgba(0,0,0,0.18) 3px,
-        rgba(0,0,0,0.18) 4px
+        transparent 2px,
+        rgba(0,0,0,0.22) 2px,
+        rgba(0,0,0,0.22) 3px
     );
     pointer-events: none;
+    z-index: 2;
 }
 
 .led-text {
     font-family: 'LTAIdentity', monospace;
-    font-size: 18px;
+    font-size: 20px;
     color: #39ff14;
     white-space: nowrap;
-    letter-spacing: 0.08em;
-    text-shadow: 0 0 8px #39ff14, 0 0 2px #39ff14;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px #39ff14, 0 0 3px #39ff14, 0 0 1px #fff;
     padding-left: 100%;
-    animation: ledScroll 12s linear infinite;
+    animation: ledScroll 35s linear infinite;
     will-change: transform;
     display: block;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes ledScroll {
@@ -88,22 +103,61 @@ body {
 }
 
 .led-text.static {
-    padding-left: 20px;
+    padding-left: 0;
     animation: none;
     transform: none;
+    width: 100%;
+    text-align: center;
 }
 
 /* ═══════════════════════════════
    BOTTOM: MAP PANEL
-   White background with full MRT network
+   Physical outer bezel + white screen with full MRT network
 ═══════════════════════════════ */
+.map-outer {
+    background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 6px 10px;
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
 .map-panel {
-    background: #f0f0ec;
-    border: 2px solid #ccc;
-    border-radius: 4px;
+    background: #eeeee8;
+    border: 1px solid #bbb;
+    border-radius: 3px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.08);
+}
+
+/* Capslet — top left of map panel */
+.map-capslet {
+    position: absolute;
+    top: 5px;
+    left: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #f99d25;
+    color: #000;
+    font-family: 'LTAIdentity', sans-serif;
+    font-size: 7px;
+    padding: 2px 6px 2px 3px;
+    border-radius: 20px;
+    z-index: 10;
+    line-height: 1;
+}
+.map-capslet-dot {
+    width: 12px; height: 12px;
+    background: #000;
+    color: #f99d25;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5px;
+    flex-shrink: 0;
 }
 
 /* Green triangle door indicators — left & right */
@@ -117,13 +171,14 @@ body {
     align-items: center;
     gap: 3px;
 }
-.door-indicator.left  { left: 4px; }
-.door-indicator.right { right: 4px; }
+.door-indicator.left  { left: 5px; }
+.door-indicator.right { right: 5px; }
 
 .door-tri {
     width: 0; height: 0;
-    opacity: 0.15;
+    opacity: 0.12;
     transition: opacity 0.2s;
+    filter: drop-shadow(0 0 3px #00cc44);
 }
 .door-tri.active { opacity: 1; }
 .door-tri.blink  { animation: doorBlink 0.7s step-start infinite; }
@@ -131,22 +186,22 @@ body {
 
 /* Left triangle points LEFT (◀) */
 .door-indicator.left .door-tri {
-    border-top: 11px solid transparent;
-    border-bottom: 11px solid transparent;
-    border-right: 14px solid #00cc44;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-right: 16px solid #00cc44;
 }
 /* Right triangle points RIGHT (▶) */
 .door-indicator.right .door-tri {
-    border-top: 11px solid transparent;
-    border-bottom: 11px solid transparent;
-    border-left: 14px solid #00cc44;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-left: 16px solid #00cc44;
 }
 
 /* Legend top-right */
 .legend {
     position: absolute;
     top: 5px;
-    right: 5px;
+    right: 24px;
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -161,7 +216,7 @@ body {
     color: #333;
 }
 .legend-line {
-    width: 16px;
+    width: 14px;
     height: 3px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -244,26 +299,36 @@ body {
 
 <div class="display-unit">
 
-    <!-- LED TICKER STRIP -->
-    <div class="led-strip">
-        <span class="led-text" id="ledText">Next station: Dhoby Ghaut (CC1)</span>
+    <!-- LED TICKER STRIP with outer bezel -->
+    <div class="led-outer">
+        <div class="led-strip">
+            <span class="led-text" id="ledText">Next station: Dhoby Ghaut (CC1)</span>
+        </div>
     </div>
 
-    <!-- MAP PANEL -->
-    <div class="map-panel" id="mapPanel">
-        <!-- Door indicators -->
-        <div class="door-indicator left"  id="doorLeft">
-            <div class="door-tri" id="triLeft"></div>
-        </div>
-        <div class="door-indicator right" id="doorRight">
-            <div class="door-tri" id="triRight"></div>
-        </div>
+    <!-- MAP PANEL with outer bezel -->
+    <div class="map-outer">
+        <div class="map-panel" id="mapPanel">
+            <!-- Capslet top-left -->
+            <div class="map-capslet">
+                <div class="map-capslet-dot">CC</div>
+                Circle Line
+            </div>
 
-        <!-- Line legend -->
-        <div class="legend" id="legend"></div>
+            <!-- Door indicators -->
+            <div class="door-indicator left"  id="doorLeft">
+                <div class="door-tri" id="triLeft"></div>
+            </div>
+            <div class="door-indicator right" id="doorRight">
+                <div class="door-tri" id="triRight"></div>
+            </div>
 
-        <!-- Network SVG -->
-        <svg id="networkSvg" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg"></svg>
+            <!-- Line legend -->
+            <div class="legend" id="legend"></div>
+
+            <!-- Network SVG -->
+            <svg id="networkSvg" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
     </div>
 
 </div>
