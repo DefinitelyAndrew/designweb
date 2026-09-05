@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DRMD – Circle Line C851E</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
 <style>
 @font-face {
     font-family: 'LTAIdentity';
@@ -112,6 +112,14 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+}
+
+/* SVG wrap — relative container for map, capslet, legend, diamond */
+.svg-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Capslet — top left corner of map area */
@@ -268,6 +276,54 @@ body {
     transition: all 0.12s;
     white-space: nowrap;
 }
+/* ── LED ticker strip (above map, inside bezel) ── */
+.led-outer {
+    background: #111;
+    border-radius: 4px 4px 0 0;
+    padding: 0 8px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid #000;
+    /* crosshatch dot-matrix overlay */
+    background-image:
+        repeating-linear-gradient(0deg,   transparent, transparent 3px, rgba(0,0,0,0.20) 3px, rgba(0,0,0,0.20) 4px),
+        repeating-linear-gradient(90deg,  transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
+    background-color: #050505;
+}
+
+.led-text {
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    color: #c8e87a;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-shadow:
+        0 0 8px #b0d040,
+        0 0 2px #c8e87a,
+        0 0 18px rgba(180,220,60,0.35);
+    display: block;
+    position: relative;
+    z-index: 1;
+    /* scrolling by default */
+    padding-left: 100%;
+    animation: ledScroll 30s linear infinite;
+    will-change: transform;
+}
+.led-text.static {
+    padding-left: 0;
+    animation: none;
+    width: 100%;
+    text-align: center;
+}
+@keyframes ledScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-200%); }
+}
+
 .sbtn:hover { background: #222; color: #aaa; }
 .sbtn.on { background: #f99d25; color: #000; border-color: #f99d25; }
 </style>
@@ -287,18 +343,25 @@ body {
 
         <!-- Map area -->
         <div class="map-area">
-            <!-- CCL capslet -->
-            <div class="map-capslet">
-                <div class="map-capslet-dot">CC</div>
-                Circle Line
+            <!-- LED ticker -->
+            <div class="led-outer">
+                <span class="led-text" id="ledText"></span>
             </div>
-            <!-- Legend -->
-            <div class="legend" id="legend"></div>
-            <!-- Network SVG -->
-            <svg id="networkSvg" viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg"></svg>
-            <!-- Orange diamond bottom-centre -->
-            <div class="diamond-wrap">
-                <div class="diamond"></div>
+            <!-- SVG wrap (relative, holds capslet + legend + map) -->
+            <div class="svg-wrap">
+                <!-- CCL capslet -->
+                <div class="map-capslet">
+                    <div class="map-capslet-dot">CC</div>
+                    Circle Line
+                </div>
+                <!-- Legend -->
+                <div class="legend" id="legend"></div>
+                <!-- Network SVG -->
+                <svg id="networkSvg" viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg"></svg>
+                <!-- Orange diamond bottom-centre -->
+                <div class="diamond-wrap">
+                    <div class="diamond"></div>
+                </div>
             </div>
         </div>
 
@@ -339,6 +402,7 @@ body {
             <button class="btn"    data-t="courtesy">Courtesy</button>
             <button class="btn"    data-t="gap">Mind the Gap</button>
             <button class="btn"    data-t="closing">Doors Closing</button>
+            <button class="btn"    data-t="terminus">Terminus</button>
         </div>
     </div>
 </div>
@@ -541,6 +605,41 @@ const getCur  = () => CCL[curIdx];
 const getNext = () => CCL[nxt(curIdx, dir)];
 
 // ═══════════════════════════════════════
+// LED TEXT
+// ═══════════════════════════════════════
+const LED_TEXTS = {
+    station:  () => {
+        const next = getNext();
+        return loc === 'station'
+            ? `Doors open on the ${getCur().door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station ${next.n} (${next.c})   ·   `
+            : `Next station ${next.n} (${next.c})   ·   Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
+    },
+    courtesy: () => `Please give up your seat to those who need it more — the elderly, pregnant women, and passengers with young children.   ·   请给有需要的乘客让座。   ·   `,
+    gap:      () => `Please mind the platform gap.   ·   请注意列车与站台之间的间隙。   ·   Watch your step.   ·   `,
+    closing:  () => `Doors closing   ·   Doors closing   ·   请关好门   ·   `,
+    terminus: () => {
+        const next = getNext();
+        return `Next station ${next.n}. This train service ends here. Please alight immediately.   ·   下一站 ${next.n}。本次列车服务到站结束，请立即下车。   ·   `;
+    },
+};
+
+function updateLED() {
+    const el = document.getElementById('ledText');
+    if (textMode === 'closing') {
+        el.textContent = 'Doors closing';
+        el.classList.add('static');
+        el.style.animation = 'none';
+    } else {
+        const t = LED_TEXTS[textMode]();
+        el.textContent = t + t; // duplicate for seamless loop
+        el.classList.remove('static');
+        el.style.animation = 'none';
+        void el.offsetWidth; // reflow to restart animation
+        el.style.animation = '';
+    }
+}
+
+// ═══════════════════════════════════════
 // DOOR INDICATORS
 // ═══════════════════════════════════════
 function updateDoors() {
@@ -730,6 +829,7 @@ function animate(ts) {
             animPct = 0;
             curIdx  = nxt(curIdx, dir);
             updateDoors();
+            updateLED();
             updateStationBtns();
         }
     }
@@ -746,6 +846,7 @@ function setDir(d) {
     document.getElementById('btnCW').classList.toggle('on',  d === 'cw');
     document.getElementById('btnCCW').classList.toggle('on', d === 'ccw');
     updateDoors();
+    updateLED();
 }
 
 function setLoc(l) {
@@ -753,15 +854,16 @@ function setLoc(l) {
     document.getElementById('btnTrain').classList.toggle('on',   l === 'train');
     document.getElementById('btnStation').classList.toggle('on', l === 'station');
     updateDoors();
+    updateLED();
 }
 
 document.getElementById('textBtns').addEventListener('click', e => {
     const btn = e.target.closest('[data-t]');
     if (!btn) return;
     textMode = btn.dataset.t;
-    // Reset lastT so the clock doesn't jump when resuming
     lastT = null;
     document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
+    updateLED();
 });
 
 function buildStationBtns() {
@@ -772,7 +874,7 @@ function buildStationBtns() {
         b.textContent = `${st.c} ${st.n}`;
         b.addEventListener('click', () => {
             curIdx = i; animPct = 0; lastT = null;
-            updateDoors(); updateStationBtns(); buildMap();
+            updateDoors(); updateLED(); updateStationBtns(); buildMap();
         });
         wrap.appendChild(b);
     });
@@ -789,6 +891,7 @@ function updateStationBtns() {
 buildLegend();
 buildStationBtns();
 updateDoors();
+updateLED();
 </script>
 </body>
 </html>
