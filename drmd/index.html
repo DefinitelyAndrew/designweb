@@ -25,7 +25,7 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-/* ── Metallic bezel ── */
+/* ── Bezel ── */
 .drmd-outer {
     width: 100%;
     max-width: 980px;
@@ -38,7 +38,7 @@ body {
         inset 0 -1px 0 rgba(0,0,0,0.3);
 }
 
-/* ── White display panel ── */
+/* ── White panel ── */
 .drmd-panel {
     background: #edeeed;
     border-radius: 6px;
@@ -46,7 +46,6 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.10);
-    position: relative;
 }
 
 /* ── LED ticker ── */
@@ -60,6 +59,7 @@ body {
     align-items: center;
     overflow: hidden;
     border-bottom: 1px solid #000;
+    flex-shrink: 0;
 }
 .led-text {
     font-family: 'VT323', monospace;
@@ -70,7 +70,6 @@ body {
     line-height: 1;
     text-shadow: 0 0 8px #b0d040, 0 0 2px #c8e87a;
     display: block;
-    position: relative;
     z-index: 1;
     padding-left: 100%;
     animation: ledScroll 32s linear infinite;
@@ -87,34 +86,33 @@ body {
     to   { transform: translateX(-100%); }
 }
 
-/* ── Map row: left zone + map + right zone ── */
+/* ── Main row ── */
 .map-row {
     display: flex;
     align-items: stretch;
+    flex: 1;
 }
 
-/* ── Left / Right edge zones ──
-   Contains: large downward triangle + small direction arrow */
+/* ── Edge zones: big ▼ triangle + direction arrow text ── */
 .edge-zone {
     flex-shrink: 0;
-    width: 70px;
+    width: 68px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 6px 4px;
+    gap: 5px;
+    padding: 8px 4px;
 }
 
-/* Big downward-pointing ▼ door triangle */
+/* Downward ▼ door triangle */
 .door-tri {
     width: 0; height: 0;
-    border-left:  26px solid transparent;
-    border-right: 26px solid transparent;
-    border-top:   34px solid #39e030;
-    opacity: 0.08;
+    border-left:  27px solid transparent;
+    border-right: 27px solid transparent;
+    border-top:   36px solid #39e030;
+    opacity: 0.07;
     transition: opacity 0.15s, filter 0.15s;
-    filter: drop-shadow(0 0 0px #39e030);
 }
 .door-tri.active {
     opacity: 1;
@@ -123,26 +121,28 @@ body {
 .door-tri.blink { animation: doorBlink 0.65s step-start infinite; }
 @keyframes doorBlink { 50% { opacity: 0; } }
 
-/* Small direction arrow below the triangle */
-.dir-arrow {
-    font-size: 14px;
+/* Direction label under triangle */
+.dir-label {
+    font-family: 'LTAIdentity', sans-serif;
+    font-size: 8px;
     font-weight: 700;
     color: #555;
-    line-height: 1;
-    font-family: 'LTAIdentity', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
 }
 
-/* ── Centre map area ── */
+/* ── Map area ── */
 .map-area {
     flex: 1;
     position: relative;
     overflow: hidden;
 }
 
-/* Capslet top-left */
+/* CCL capslet */
 .map-capslet {
     position: absolute;
-    top: 4px; left: 2px;
+    top: 5px; left: 4px;
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -165,13 +165,11 @@ body {
     flex-shrink: 0;
 }
 
-/* Legend top-right */
+/* Legend */
 .legend {
     position: absolute;
-    top: 4px; right: 2px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5px;
+    top: 5px; right: 4px;
+    display: flex; flex-direction: column; gap: 1.5px;
     z-index: 5;
 }
 .legend-item {
@@ -181,7 +179,6 @@ body {
 }
 .legend-line { width: 12px; height: 3px; border-radius: 1.5px; flex-shrink: 0; }
 
-/* SVG map fills the area */
 #mapSvg { display: block; width: 100%; }
 
 /* ── Controls ── */
@@ -224,41 +221,35 @@ body {
 <div class="drmd-outer">
   <div class="drmd-panel">
 
-    <!-- LED ticker -->
     <div class="led-outer">
       <span class="led-text" id="ledText"></span>
     </div>
 
-    <!-- Map row -->
     <div class="map-row">
 
-      <!-- Left edge: door tri (▼) + direction arrow -->
-      <div class="edge-zone" id="edgeLeft">
+      <div class="edge-zone">
         <div class="door-tri" id="triLeft"></div>
-        <div class="dir-arrow" id="arrowLeft"></div>
+        <div class="dir-label" id="dirLeft"></div>
       </div>
 
-      <!-- CCL loop map -->
       <div class="map-area">
         <div class="map-capslet">
           <div class="map-capslet-dot">CC</div>
           Circle Line
         </div>
         <div class="legend" id="legend"></div>
-        <svg id="mapSvg" viewBox="0 0 800 195" xmlns="http://www.w3.org/2000/svg"></svg>
+        <svg id="mapSvg" viewBox="0 0 640 195" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
 
-      <!-- Right edge: door tri (▼) + direction arrow -->
-      <div class="edge-zone" id="edgeRight">
+      <div class="edge-zone">
         <div class="door-tri" id="triRight"></div>
-        <div class="dir-arrow" id="arrowRight"></div>
+        <div class="dir-label" id="dirRight"></div>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- Controls -->
 <div class="controls">
   <div class="ctrl-row">
     <span class="ctrl-lbl">Station</span>
@@ -291,9 +282,9 @@ body {
 </div>
 
 <script>
-// ═══════════════════════════
-// STATIONS (CCL clockwise order, CC18 doesn't exist)
-// ═══════════════════════════
+// ════════════════════════════════════════
+// STATIONS
+// ════════════════════════════════════════
 const CCL = [
     {c:'CC1',  n:'Dhoby Ghaut',        ix:['NSL','NEL'], door:'L'},
     {c:'CC2',  n:'Bras Basah',         ix:[],            door:'L'},
@@ -339,71 +330,63 @@ const LINE_COLORS = {
     TEL: '#784008',
 };
 
-// ═══════════════════════════
-// CCL LOOP POSITIONS
-// viewBox 0 0 800 195
-// The loop is an oval — top-right arc (CC1→CC17),
-// bottom arc (CC19→CC29), then right-side spur back up (CC30→CC34→CC4)
-// ═══════════════════════════
-const CCL_POS = {
-    // Top arc: CC1 (left-centre) clockwise around the top to CC17
-    CC1:  [190, 100],
-    CC2:  [218, 116],
-    CC3:  [244, 130],
-    CC4:  [268, 118],
-    CC5:  [291, 106],
-    CC6:  [314, 116],
-    CC7:  [330, 130],
-    CC8:  [344, 145],
-    CC9:  [355, 160],
-    CC10: [358, 175],
-    CC11: [352, 186],
-    CC12: [338, 191],
-    CC13: [320, 189],
-    CC14: [302, 183],
-    CC15: [282, 175],
-    CC16: [264, 163],
-    CC17: [248, 152],
-    // Skip CC18 (doesn't exist)
-    CC19: [220, 148],
-    CC20: [198, 148],
-    CC21: [176, 151],
-    CC22: [156, 146],
-    CC23: [138, 136],
-    CC24: [124, 122],
-    CC25: [113, 108],
-    CC26: [108,  93],
-    CC27: [110,  78],
-    CC28: [120,  65],
-    CC29: [136,  54],
-    // Spur: CC30→CC34 curving back up to close at CC4
-    CC30: [162,  48],
-    CC31: [188,  48],
-    CC32: [212,  50],
-    CC33: [232,  57],
-    CC34: [252,  68],
-};
+// ════════════════════════════════════════
+// GEOMETRY — place 33 stations evenly
+// around a geometric ellipse
+// viewBox 640 × 195, ellipse centred at (320, 100)
+// ════════════════════════════════════════
+const CX = 320, CY = 100, RX = 270, RY = 82;
+// CC1 is at the top-left of the loop in the real map.
+// Clockwise starts from roughly the "10 o'clock" position.
+// Angle 0 = rightmost point (3 o'clock). We offset so CC1
+// starts at ~200° (bottom-left area) going clockwise.
+// 33 stations, evenly spaced 360/33 ≈ 10.9° apart.
+// Loop: CC1→CC2→…→CC34, then CC34 connects BACK to CC4 (not CC1).
+// That's a partial loop — CC34→CC4 is the short branch closing it.
+// The circle has 33 stations but CC18 is missing so we have
+// CC1-CC17 (17 stations) + CC19-CC34 (16 stations) = 33.
+// Treat them as 33 evenly spaced positions.
 
-// ═══════════════════════════
+const N = CCL.length; // 33
+const START_ANGLE = 195; // degrees — where CC1 sits (approx top-left, clockwise)
+
+function stationAngle(i) {
+    // clockwise: angle increases as i increases
+    return (START_ANGLE + i * (360 / N)) % 360;
+}
+
+function angleToXY(deg) {
+    const rad = (deg - 90) * Math.PI / 180; // -90 so 0° is top
+    return [
+        CX + RX * Math.cos(rad),
+        CY + RY * Math.sin(rad),
+    ];
+}
+
+// Precompute positions
+const POS = CCL.map((_, i) => angleToXY(stationAngle(i)));
+
+// ════════════════════════════════════════
 // STATE
-// ═══════════════════════════
+// ════════════════════════════════════════
 let curIdx   = 0;
 let dir      = 'cw';
 let loc      = 'train';
 let textMode = 'station';
 let lastT    = null;
+let _acc     = 0;
 const TRAVEL = 5000;
 
 function nxtIdx(i, d) {
-    if (d === 'cw')  return i === CCL.length - 1 ? 3 : i + 1; // CC34 → CC4
-    else             return i === 3 ? CCL.length - 1 : (i - 1 < 0 ? CCL.length - 1 : i - 1);
+    if (d === 'cw')  return i === N - 1 ? 3 : i + 1;
+    else             return i === 3 ? N - 1 : (i - 1 < 0 ? N - 1 : i - 1);
 }
 const getCur  = () => CCL[curIdx];
 const getNext = () => CCL[nxtIdx(curIdx, dir)];
 
-// ═══════════════════════════
+// ════════════════════════════════════════
 // SVG HELPER
-// ═══════════════════════════
+// ════════════════════════════════════════
 function svgEl(tag, attrs, txt) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
@@ -411,67 +394,114 @@ function svgEl(tag, attrs, txt) {
     return el;
 }
 
-// ═══════════════════════════
-// MAP
-// ═══════════════════════════
+// ════════════════════════════════════════
+// BUILD MAP
+// ════════════════════════════════════════
 function buildMap() {
     const svg = document.getElementById('mapSvg');
     svg.innerHTML = '';
 
-    const cur  = getCur();
     const next = getNext();
 
-    // ── Draw CCL loop segments ──
-    // Clockwise order: CC1→CC2→...→CC34, then CC34→CC4 closes the loop
-    const pts = CCL.map(s => CCL_POS[s.c]);
+    // ── 1. Draw the circle track ──
+    // Use an SVG <ellipse> with a stroke-dasharray to show
+    // past (dim) vs future (bright) segments.
+    // Simpler: draw full dim ellipse first, then bright arc on top.
 
-    for (let i = 0; i < pts.length - 1; i++) {
-        const [ax, ay] = pts[i];
-        const [bx, by] = pts[i + 1];
-        const isPast = dir === 'cw' ? i < curIdx : i > curIdx;
-        svg.appendChild(svgEl('line', {
-            x1: ax, y1: ay, x2: bx, y2: by,
-            stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
-            'stroke-linecap': 'round',
-            opacity: isPast ? '0.22' : '1',
-        }));
-    }
-    // Close loop: CC34 → CC4
-    {
-        const [ax, ay] = CCL_POS['CC34'];
-        const [bx, by] = CCL_POS['CC4'];
-        svg.appendChild(svgEl('line', {
-            x1: ax, y1: ay, x2: bx, y2: by,
-            stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
-            'stroke-linecap': 'round', opacity: '1',
-        }));
+    // Full dim ellipse (past / whole track background)
+    svg.appendChild(svgEl('ellipse', {
+        cx: CX, cy: CY, rx: RX, ry: RY,
+        fill: 'none',
+        stroke: LINE_COLORS.CCL,
+        'stroke-width': '4',
+        opacity: '0.2',
+    }));
+
+    // Bright arc from curIdx forward (future path)
+    // We draw individual line segments between consecutive station positions
+    // for the future portion — simpler than arc math.
+    for (let i = 0; i < N; i++) {
+        const j   = (i + 1) % N;
+        const [ax, ay] = POS[i];
+        const [bx, by] = POS[j];
+        // Is this segment "future" (at or ahead of current)?
+        const isPast = dir === 'cw'
+            ? (i < curIdx)
+            : (i > curIdx && i < N);
+        if (!isPast) {
+            svg.appendChild(svgEl('line', {
+                x1: ax, y1: ay, x2: bx, y2: by,
+                stroke: LINE_COLORS.CCL,
+                'stroke-width': '4',
+                'stroke-linecap': 'round',
+                opacity: '1',
+            }));
+        }
     }
 
-    // ── Station dots + labels ──
+    // ── 2. Direction arrows on the track ──
+    // Place 4 arrowheads evenly around the circle pointing in travel direction
+    const arrowPositions = [0, 8, 16, 24]; // at every ~quarter circle
+    arrowPositions.forEach(i => {
+        const j = (i + 1) % N;
+        const [ax, ay] = POS[i];
+        const [bx, by] = POS[j];
+        // midpoint
+        const mx = (ax + bx) / 2, my = (ay + by) / 2;
+        // direction vector
+        let dx = bx - ax, dy = by - ay;
+        if (dir === 'ccw') { dx = -dx; dy = -dy; }
+        const len = Math.sqrt(dx*dx + dy*dy) || 1;
+        dx /= len; dy /= len;
+        // perpendicular
+        const px = -dy, py = dx;
+        const as = 6; // arrow size
+        // triangle: tip in direction of travel
+        const pts = [
+            `${mx + dx*as},${my + dy*as}`,
+            `${mx - dx*as + px*as*0.6},${my - dy*as + py*as*0.6}`,
+            `${mx - dx*as - px*as*0.6},${my - dy*as - py*as*0.6}`,
+        ].join(' ');
+        svg.appendChild(svgEl('polygon', {
+            points: pts,
+            fill: LINE_COLORS.CCL,
+            opacity: '0.7',
+        }));
+    });
+
+    // ── 3. Station dots ──
     CCL.forEach((st, i) => {
-        const [x, y] = CCL_POS[st.c];
+        const [x, y] = POS[i];
         const isCur  = i === curIdx;
         const isNext = st.c === next.c;
         const isPast = dir === 'cw' ? i < curIdx : i > curIdx;
         const hasIx  = st.ix.length > 0;
         const op     = isPast && !isCur && !isNext ? '0.25' : '1';
 
-        // Dot
         const r    = isCur ? 7 : hasIx ? 5 : 3.5;
         const fill = isCur ? LINE_COLORS.CCL : '#fff';
         const sw   = isCur ? 0 : 1.5;
+
         svg.appendChild(svgEl('circle', {
             cx: x, cy: y, r,
-            fill, stroke: LINE_COLORS.CCL, 'stroke-width': sw, opacity: op,
+            fill, stroke: LINE_COLORS.CCL,
+            'stroke-width': sw,
+            opacity: op,
         }));
 
         // Interchange colour dots
         if (hasIx) {
             st.ix.forEach((line, ri) => {
+                // outward from circle centre
+                const nx = (x - CX) / RX, ny = (y - CY) / RY;
+                const nlen = Math.sqrt(nx*nx + ny*ny) || 1;
+                const ox = nx / nlen, oy = ny / nlen;
+                // perpendicular
+                const px = -oy, py = ox;
+                const bx2 = x + ox*(r + 5) + (ri - (st.ix.length - 1)/2) * px * 6;
+                const by2 = y + oy*(r + 5) + (ri - (st.ix.length - 1)/2) * py * 6;
                 svg.appendChild(svgEl('circle', {
-                    cx: x + (ri - (st.ix.length - 1) / 2) * 7,
-                    cy: y + r + 5,
-                    r: '3',
+                    cx: bx2, cy: by2, r: '3',
                     fill: LINE_COLORS[line] || '#888',
                     stroke: '#edeeed', 'stroke-width': '0.5',
                     opacity: op,
@@ -479,16 +509,14 @@ function buildMap() {
             });
         }
 
-        // Label (only for current, next, and interchange stations)
+        // ── Labels — pushed outward from circle centre ──
         if (isCur || isNext || hasIx) {
-            // Decide label position: push away from centre of oval
-            // oval centre ≈ (230, 120)
-            const cx = 230, cy = 120;
-            const dx = x - cx, dy = y - cy;
-            const len = Math.sqrt(dx*dx + dy*dy) || 1;
-            const offset = r + (hasIx ? 11 : 8);
-            const lx = x + (dx / len) * offset;
-            const ly = y + (dy / len) * offset;
+            const nx = (x - CX) / RX, ny = (y - CY) / RY;
+            const nlen = Math.sqrt(nx*nx + ny*ny) || 1;
+            const ox = nx / nlen, oy = ny / nlen;
+            const labelDist = r + (hasIx ? 13 : 10);
+            const lx = x + ox * labelDist;
+            const ly = y + oy * labelDist;
 
             svg.appendChild(svgEl('text', {
                 x: lx, y: ly,
@@ -497,61 +525,64 @@ function buildMap() {
                 'font-family': 'LTAIdentity, sans-serif',
                 'font-size': isCur ? '7' : isNext ? '6.5' : '5.5',
                 'font-weight': isCur || isNext ? '700' : 'normal',
-                fill: isCur ? '#c97200' : isNext ? '#333' : '#444',
+                fill: isCur ? '#b87000' : isNext ? '#222' : '#444',
                 opacity: isPast && !isCur && !isNext ? '0.3' : '1',
             }, st.n));
         }
 
-        // ▼ Downward arrow above current station dot
+        // ── ▼ Arrow pointing FROM outside circle TOWARD current dot ──
         if (isCur) {
-            // Triangle pointing DOWN, tip at top of the dot
-            const aw = 10, ah = 10;
-            // position it above the dot (in the direction away from centre)
-            const cx = 230, cy = 120;
-            const dx = x - cx, dy = y - cy;
-            const len = Math.sqrt(dx*dx + dy*dy) || 1;
-            // arrow sits just outside the dot on the outward side
-            const ax2 = x - (dx / len) * (r + 2);
-            const ay2 = y - (dy / len) * (r + 2);
-            // perpendicular
-            const px = -dy / len, py = dx / len;
-            // downward-pointing triangle: tip points toward dot
+            // Unit vector from centre outward to this station
+            const nx = (x - CX) / RX, ny = (y - CY) / RY;
+            const nlen = Math.sqrt(nx*nx + ny*ny) || 1;
+            const ox = nx / nlen, oy = ny / nlen;
+            // Arrow tip = just outside the dot
+            const tipX = x + ox * (r + 1);
+            const tipY = y + oy * (r + 1);
+            // Arrow base further out
+            const baseX = x + ox * (r + 12);
+            const baseY = y + oy * (r + 12);
+            // Perpendicular for width
+            const px = -oy, py = ox;
+            const hw = 6; // half-width of arrow base
             svg.appendChild(svgEl('polygon', {
                 points: [
-                    `${ax2},${ay2}`,
-                    `${ax2 - (dx/len)*ah + px*aw/2},${ay2 - (dy/len)*ah + py*aw/2}`,
-                    `${ax2 - (dx/len)*ah - px*aw/2},${ay2 - (dy/len)*ah - py*aw/2}`,
+                    `${tipX},${tipY}`,
+                    `${baseX + px*hw},${baseY + py*hw}`,
+                    `${baseX - px*hw},${baseY - py*hw}`,
                 ].join(' '),
                 fill: LINE_COLORS.CCL,
+                opacity: '1',
             }));
         }
     });
 }
 
-// ═══════════════════════════
+// ════════════════════════════════════════
 // LED TEXT
-// ═══════════════════════════
+// ════════════════════════════════════════
 const LED_TEXTS = {
     station: () => {
-        const cur = getCur(), next = getNext();
+        const cur = getCur(), nxt2 = getNext();
         if (loc === 'station') {
-            return `Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station, ${next.n} (${next.c})   ·   `;
+            return `Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station, ${nxt2.n} (${nxt2.c})   ·   `;
         }
-        return `Next station, ${next.n} (${next.c})   ·   Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
+        return `Next station, ${nxt2.n} (${nxt2.c})   ·   Doors will open on the ${nxt2.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
     },
     courtesy: () => `Please give up your seat to those who need it more — the elderly, pregnant women, and passengers with young children.   ·   `,
     gap:      () => `Please mind the platform gap.   ·   Watch your step.   ·   `,
     closing:  () => `Doors closing`,
-    terminus: () => {
-        const next = getNext();
-        return `Next station, ${next.n}. This train service ends immediately, please alight immediately.   ·   `;
-    },
+    terminus: () => `${getNext().n}`,
 };
 
 function updateLED() {
     const el = document.getElementById('ledText');
     if (textMode === 'closing') {
         el.textContent = 'Doors closing';
+        el.classList.add('static');
+        el.style.animation = 'none';
+    } else if (textMode === 'terminus') {
+        el.textContent = getNext().n;
         el.classList.add('static');
         el.style.animation = 'none';
     } else {
@@ -564,38 +595,35 @@ function updateLED() {
     }
 }
 
-// ═══════════════════════════
-// DOOR TRIANGLES + DIRECTION ARROWS
-// ═══════════════════════════
+// ════════════════════════════════════════
+// DOOR TRIANGLES + DIRECTION LABELS
+// ════════════════════════════════════════
 function updateDoors() {
-    const st     = loc === 'station' ? getCur() : getNext();
-    const atStn  = loc === 'station';
-    const isLeft = st.door === 'L';
-    const tL     = document.getElementById('triLeft');
-    const tR     = document.getElementById('triRight');
+    const st    = loc === 'station' ? getCur() : getNext();
+    const atStn = loc === 'station';
+    const isL   = st.door === 'L';
 
-    tL.className = 'door-tri' + (isLeft  ? ' active' : '') + (isLeft  && atStn ? ' blink' : '');
-    tR.className = 'door-tri' + (!isLeft ? ' active' : '') + (!isLeft && atStn ? ' blink' : '');
+    const tL = document.getElementById('triLeft');
+    const tR = document.getElementById('triRight');
+    tL.className = 'door-tri' + (isL  ? ' active' : '') + (isL  && atStn ? ' blink' : '');
+    tR.className = 'door-tri' + (!isL ? ' active' : '') + (!isL && atStn ? ' blink' : '');
 
-    // Direction arrows: CW = ↻ on right side, CCW = ↺ on left side
-    document.getElementById('arrowLeft').textContent  = dir === 'ccw' ? '↺' : '';
-    document.getElementById('arrowRight').textContent = dir === 'cw'  ? '↻' : '';
+    // Direction labels on each side
+    const cwLabel  = 'CW →';
+    const ccwLabel = '← CCW';
+    document.getElementById('dirLeft').textContent  = dir === 'cw'  ? cwLabel  : ccwLabel;
+    document.getElementById('dirRight').textContent = dir === 'cw'  ? cwLabel  : ccwLabel;
 }
 
-// ═══════════════════════════
+// ════════════════════════════════════════
 // LEGEND
-// ═══════════════════════════
+// ════════════════════════════════════════
 function buildLegend() {
     const el = document.getElementById('legend');
     el.innerHTML = '';
-    [
-        ['NSL', 'North-South Line'],
-        ['EWL', 'East-West Line'],
-        ['NEL', 'North East Line'],
-        ['CCL', 'Circle Line'],
-        ['DTL', 'Downtown Line'],
-        ['TEL', 'Thomson-East Coast Line'],
-    ].forEach(([code, name]) => {
+    [['NSL','North-South Line'],['EWL','East-West Line'],['NEL','North East Line'],
+     ['CCL','Circle Line'],['DTL','Downtown Line'],['TEL','Thomson-East Coast Line']]
+    .forEach(([code, name]) => {
         const row = document.createElement('div');
         row.className = 'legend-item';
         row.innerHTML = `<div class="legend-line" style="background:${LINE_COLORS[code]}"></div><span>${name}</span>`;
@@ -603,44 +631,39 @@ function buildLegend() {
     });
 }
 
-// ═══════════════════════════
-// ANIMATION LOOP
-// ═══════════════════════════
+// ════════════════════════════════════════
+// ANIMATION
+// ════════════════════════════════════════
 function animate(ts) {
     if (!lastT) lastT = ts;
     const dt = ts - lastT;
     lastT = ts;
 
     if (loc === 'train' && textMode === 'station') {
-        if (!animate._acc) animate._acc = 0;
-        animate._acc += dt;
-        if (animate._acc >= TRAVEL) {
-            animate._acc = 0;
+        _acc += dt;
+        if (_acc >= TRAVEL) {
+            _acc = 0;
             curIdx = nxtIdx(curIdx, dir);
-            updateDoors();
-            updateLED();
-            updateStationBtns();
-            buildMap();
+            updateDoors(); updateLED(); updateStationBtns(); buildMap();
         }
     } else {
-        animate._acc = 0;
+        _acc = 0;
     }
     requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 
-// ═══════════════════════════
+// ════════════════════════════════════════
 // CONTROLS
-// ═══════════════════════════
+// ════════════════════════════════════════
 function setDir(d) {
-    dir = d; lastT = null; animate._acc = 0;
+    dir = d; lastT = null; _acc = 0;
     document.getElementById('btnCW').classList.toggle('on',  d === 'cw');
     document.getElementById('btnCCW').classList.toggle('on', d === 'ccw');
     updateDoors(); updateLED(); buildMap();
 }
-
 function setLoc(l) {
-    loc = l; lastT = null; animate._acc = 0;
+    loc = l; lastT = null; _acc = 0;
     document.getElementById('btnTrain').classList.toggle('on',   l === 'train');
     document.getElementById('btnStation').classList.toggle('on', l === 'station');
     updateDoors(); updateLED(); buildMap();
@@ -650,7 +673,7 @@ document.getElementById('textBtns').addEventListener('click', e => {
     const btn = e.target.closest('[data-t]');
     if (!btn) return;
     textMode = btn.dataset.t;
-    lastT = null; animate._acc = 0;
+    lastT = null; _acc = 0;
     document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
     updateLED();
 });
@@ -662,21 +685,19 @@ function buildStationBtns() {
         b.className = 'sbtn' + (i === curIdx ? ' on' : '');
         b.textContent = `${st.c} ${st.n}`;
         b.addEventListener('click', () => {
-            curIdx = i; lastT = null; animate._acc = 0;
+            curIdx = i; lastT = null; _acc = 0;
             updateDoors(); updateLED(); updateStationBtns(); buildMap();
         });
         wrap.appendChild(b);
     });
 }
 function updateStationBtns() {
-    document.querySelectorAll('#stationBtns .sbtn').forEach((b, i) => {
-        b.classList.toggle('on', i === curIdx);
-    });
+    document.querySelectorAll('#stationBtns .sbtn').forEach((b, i) => b.classList.toggle('on', i === curIdx));
 }
 
-// ═══════════════════════════
+// ════════════════════════════════════════
 // INIT
-// ═══════════════════════════
+// ════════════════════════════════════════
 buildLegend();
 buildStationBtns();
 updateDoors();
