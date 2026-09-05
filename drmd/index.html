@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DRMD – Circle Line C851E</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face {
     font-family: 'LTAIdentity';
@@ -15,141 +15,110 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    background: #2a2a2a;
+    background: #1e1e1e;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 24px;
-    padding: 24px 16px;
+    gap: 20px;
+    padding: 20px 16px;
     font-family: 'Montserrat', sans-serif;
 }
 
-/* ═══════════════════════════════
-   DISPLAY UNIT WRAPPER
-   Mimics the two physical panels mounted above the train door
-═══════════════════════════════ */
-.display-unit {
+/* ═══════════════════════════════════════════════════
+   DRMD PANEL — single unit, white, wide & shallow
+   Matches the real C851E above-door display
+═══════════════════════════════════════════════════ */
+.drmd-outer {
     width: 100%;
     max-width: 980px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* ═══════════════════════════════
-   TOP: LED TICKER STRIP
-   Physical outer bezel + black screen with green dot-matrix text
-═══════════════════════════════ */
-.led-outer {
-    background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
-    border: 1px solid #555;
-    border-radius: 6px;
-    padding: 6px 10px;
+    /* Metallic silver bezel */
+    background: linear-gradient(180deg, #c8caca 0%, #9fa3a3 40%, #b0b4b4 100%);
+    border-radius: 10px;
+    padding: 5px 5px 6px 5px;
     box-shadow:
-        0 2px 6px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 4px 18px rgba(0,0,0,0.55),
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset;
 }
 
-.led-strip {
-    background: #020202;
-    border: 1px solid #0a0a0a;
-    border-radius: 3px;
-    height: 44px;
+.drmd-panel {
+    background: #e8ebe6;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    /* Subtle inner shadow for depth */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.12);
+}
+
+/* ── Door indicators ── */
+/* Large glowing green triangles on each side */
+.door-zone {
+    flex-shrink: 0;
+    width: 64px;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    box-shadow:
-        inset 0 0 12px rgba(0,0,0,0.9),
-        inset 0 0 4px rgba(180,220,60,0.04);
+    justify-content: center;
+    background: #e8ebe6;
     position: relative;
+    z-index: 5;
 }
+.door-zone.left  { padding-left: 6px; }
+.door-zone.right { padding-right: 6px; }
 
-/* Dot-matrix scanline overlay */
-.led-strip::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 3px,
-            rgba(0,0,0,0.18) 3px,
-            rgba(0,0,0,0.18) 4px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 3px,
-            rgba(0,0,0,0.10) 3px,
-            rgba(0,0,0,0.10) 4px
-        );
-    pointer-events: none;
-    z-index: 2;
-}
-
-.led-text {
-    font-family: 'VT323', monospace;
-    font-size: 26px;
-    color: #c8e87a;
-    white-space: nowrap;
-    letter-spacing: 0.08em;
-    text-shadow:
-        0 0 8px #b8d84a,
-        0 0 2px #c8e87a,
-        0 0 18px rgba(180, 220, 60, 0.4);
-    padding-left: 100%;
-    animation: ledScroll 35s linear infinite;
-    will-change: transform;
-    display: block;
+.door-tri-wrap {
     position: relative;
-    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-@keyframes ledScroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-200%); }
+/* CSS triangle — big solid green */
+.door-tri {
+    width: 0; height: 0;
+    opacity: 0.08;
+    transition: opacity 0.15s, filter 0.15s;
+    filter: drop-shadow(0 0 0px #39e030);
+}
+.door-tri.active {
+    opacity: 1;
+    filter:
+        drop-shadow(0 0 6px #39e030)
+        drop-shadow(0 0 14px rgba(57,224,48,0.6));
+}
+.door-tri.blink { animation: doorBlink 0.65s step-start infinite; }
+@keyframes doorBlink { 50% { opacity: 0; } }
+
+/* Left ◀ */
+.door-zone.left .door-tri {
+    border-top:    22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-right:  30px solid #39e030;
+}
+/* Right ▶ */
+.door-zone.right .door-tri {
+    border-top:    22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-left:   30px solid #39e030;
 }
 
-.led-text.static {
-    padding-left: 0;
-    animation: none;
-    transform: none;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-}
-
-/* ═══════════════════════════════
-   BOTTOM: MAP PANEL
-   Physical outer bezel + white screen with full MRT network
-═══════════════════════════════ */
-.map-outer {
-    background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
-    border: 1px solid #555;
-    border-radius: 6px;
-    padding: 6px 10px;
-    box-shadow:
-        0 2px 6px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-}
-
-.map-panel {
-    background: #eeeee8;
-    border: 1px solid #bbb;
-    border-radius: 3px;
+/* ── Map area (centre) ── */
+.map-area {
+    flex: 1;
     position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
-/* Capslet — top left of map panel */
+/* Capslet — top left corner of map area */
 .map-capslet {
     position: absolute;
-    top: 5px;
-    left: 24px;
+    top: 4px;
+    left: 0px;
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -163,60 +132,25 @@ body {
     line-height: 1;
 }
 .map-capslet-dot {
-    width: 12px; height: 12px;
+    width: 13px; height: 13px;
     background: #000;
     color: #f99d25;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 5px;
+    font-size: 5.5px;
     flex-shrink: 0;
+    font-family: 'LTAIdentity', sans-serif;
+    font-weight: 700;
 }
 
-/* Green triangle door indicators — left & right */
-.door-indicator {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-}
-.door-indicator.left  { left: 5px; }
-.door-indicator.right { right: 5px; }
-
-.door-tri {
-    width: 0; height: 0;
-    opacity: 0.12;
-    transition: opacity 0.2s;
-    filter: drop-shadow(0 0 3px #00cc44);
-}
-.door-tri.active { opacity: 1; }
-.door-tri.blink  { animation: doorBlink 0.7s step-start infinite; }
-@keyframes doorBlink { 50% { opacity: 0; } }
-
-/* Left triangle points LEFT (◀) */
-.door-indicator.left .door-tri {
-    border-top: 13px solid transparent;
-    border-bottom: 13px solid transparent;
-    border-right: 16px solid #00cc44;
-}
-/* Right triangle points RIGHT (▶) */
-.door-indicator.right .door-tri {
-    border-top: 13px solid transparent;
-    border-bottom: 13px solid transparent;
-    border-left: 16px solid #00cc44;
-}
-
-/* Legend top-right */
+/* Legend top-right of map area */
 .legend {
     position: absolute;
-    top: 5px;
-    right: 24px;
+    top: 4px;
+    right: 0px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1.5px;
     z-index: 5;
 }
 .legend-item {
@@ -224,25 +158,56 @@ body {
     align-items: center;
     gap: 3px;
     font-family: 'LTAIdentity', sans-serif;
-    font-size: 6px;
+    font-size: 5.5px;
     color: #333;
+    line-height: 1.2;
 }
 .legend-line {
-    width: 14px;
+    width: 12px;
     height: 3px;
-    border-radius: 2px;
+    border-radius: 1.5px;
     flex-shrink: 0;
 }
 
-/* SVG map fills the panel */
+/* SVG map */
 #networkSvg {
     display: block;
     width: 100%;
 }
 
-/* ═══════════════════════════════
+/* Orange diamond at bottom-centre of whole panel */
+.diamond-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(45%);
+    width: 14px;
+    height: 14px;
+    background: #f99d25;
+    border-radius: 2px;
+    transform: translateX(-50%) rotate(45deg) translateY(-25%);
+    z-index: 20;
+    box-shadow: 0 0 6px rgba(249,157,37,0.7);
+}
+/* Use a positioned wrapper instead */
+.diamond-wrap {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+.diamond-wrap .diamond {
+    width: 12px;
+    height: 12px;
+    background: #f99d25;
+    transform: rotate(45deg);
+    box-shadow: 0 0 5px rgba(249,157,37,0.8), 0 0 10px rgba(249,157,37,0.4);
+}
+
+/* ═══════════════════════════════════════════════════
    CONTROLS
-═══════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .controls {
     width: 100%;
     max-width: 980px;
@@ -259,7 +224,7 @@ body {
 .ctrl-lbl {
     font-size: 10px;
     font-weight: 700;
-    color: #666;
+    color: #555;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     min-width: 110px;
@@ -309,43 +274,45 @@ body {
 </head>
 <body>
 
-<div class="display-unit">
+<!-- ═══════ DRMD PANEL ═══════ -->
+<div class="drmd-outer">
+    <div class="drmd-panel" id="drmdPanel">
 
-    <!-- LED TICKER STRIP with outer bezel -->
-    <div class="led-outer">
-        <div class="led-strip">
-            <span class="led-text" id="ledText">Next station: Dhoby Ghaut (CC1)</span>
+        <!-- Left door indicator -->
+        <div class="door-zone left" id="doorZoneLeft">
+            <div class="door-tri-wrap">
+                <div class="door-tri" id="triLeft"></div>
+            </div>
         </div>
-    </div>
 
-    <!-- MAP PANEL with outer bezel -->
-    <div class="map-outer">
-        <div class="map-panel" id="mapPanel">
-            <!-- Capslet top-left -->
+        <!-- Map area -->
+        <div class="map-area">
+            <!-- CCL capslet -->
             <div class="map-capslet">
                 <div class="map-capslet-dot">CC</div>
                 Circle Line
             </div>
-
-            <!-- Door indicators -->
-            <div class="door-indicator left"  id="doorLeft">
-                <div class="door-tri" id="triLeft"></div>
+            <!-- Legend -->
+            <div class="legend" id="legend"></div>
+            <!-- Network SVG -->
+            <svg id="networkSvg" viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg"></svg>
+            <!-- Orange diamond bottom-centre -->
+            <div class="diamond-wrap">
+                <div class="diamond"></div>
             </div>
-            <div class="door-indicator right" id="doorRight">
+        </div>
+
+        <!-- Right door indicator -->
+        <div class="door-zone right" id="doorZoneRight">
+            <div class="door-tri-wrap">
                 <div class="door-tri" id="triRight"></div>
             </div>
-
-            <!-- Line legend -->
-            <div class="legend" id="legend"></div>
-
-            <!-- Network SVG -->
-            <svg id="networkSvg" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg"></svg>
         </div>
-    </div>
 
+    </div>
 </div>
 
-<!-- CONTROLS -->
+<!-- ═══════ CONTROLS ═══════ -->
 <div class="controls">
     <div class="ctrl-row">
         <span class="ctrl-lbl">Station</span>
@@ -362,24 +329,15 @@ body {
         <span class="ctrl-lbl">Location</span>
         <div class="btn-grp">
             <button class="btn on" id="btnTrain"   onclick="setLoc('train')">🚇 In-train</button>
-            <button class="btn"    id="btnStation" onclick="setLoc('station')">🚉 In-station</button>
-        </div>
-    </div>
-    <div class="ctrl-row">
-        <span class="ctrl-lbl">Screen text</span>
-        <div class="btn-grp" id="textBtns">
-            <button class="btn on" data-t="station">Station</button>
-            <button class="btn"    data-t="courtesy">Courtesy</button>
-            <button class="btn"    data-t="gap">Mind the Gap</button>
-            <button class="btn"    data-t="closing">Doors Closing</button>
+            <button class="btn"    id="btnStation" onclick="setLoc('station')">🚉 At station</button>
         </div>
     </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // STATIONS
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 const CCL = [
     {c:'CC1',  n:'Dhoby Ghaut',        ix:['NSL','NEL'], door:'L'},
     {c:'CC2',  n:'Bras Basah',         ix:[],            door:'L'},
@@ -416,11 +374,9 @@ const CCL = [
     {c:'CC34', n:'Bayfront',           ix:['DTL'],       door:'R'},
 ];
 
-// ─────────────────────────────────────────────────────
-// NETWORK MAP NODE POSITIONS  (x,y in 0-800 × 0-200 space)
-// Approximate the real MRT schematic: CCL loop + major other lines
-// ─────────────────────────────────────────────────────
-// CCL loop positions (ordered CC1→CC34, then CC34 connects back to CC4)
+// ═══════════════════════════════════════
+// MAP NODE POSITIONS  (viewBox 0-800 × 0-190)
+// ═══════════════════════════════════════
 const CCL_POS = {
     CC1:  [295, 108],
     CC2:  [316, 116],
@@ -457,104 +413,95 @@ const CCL_POS = {
     CC34: [318,  88],
 };
 
-// Other lines: simplified schematic nodes
-// NSL (red): Jurong East → Marina South Pier (vertical-ish)
 const NSL_NODES = [
-    {c:'NS1',  n:'Jurong East',      x:50,  y:100, ix:['EWL']},
-    {c:'NS2',  n:'Bukit Batok',      x:68,  y:92},
-    {c:'NS3',  n:'Bukit Gombak',     x:80,  y:84},
-    {c:'NS4',  n:'Choa Chu Kang',    x:88,  y:74},
-    {c:'NS5',  n:'Yew Tee',          x:92,  y:63},
-    {c:'NS7',  n:'Kranji',           x:118, y:44},
-    {c:'NS8',  n:'Marsiling',        x:135, y:38},
-    {c:'NS9',  n:'Woodlands',        x:155, y:33, ix:['TEL']},
-    {c:'NS10', n:'Admiralty',        x:174, y:33},
-    {c:'NS11', n:'Sembawang',        x:196, y:35},
-    {c:'NS13', n:'Yishun',           x:224, y:40},
-    {c:'NS14', n:'Khatib',           x:244, y:47},
-    {c:'NS15', n:'Yio Chu Kang',     x:263, y:55},
-    {c:'NS16', n:'Ang Mo Kio',       x:278, y:65},
-    {c:'NS17', n:'Bishan',           x:338, y:174, ix:['CCL']},
-    {c:'NS18', n:'Braddell',         x:313, y:134},
-    {c:'NS19', n:'Toa Payoh',        x:313, y:122},
-    {c:'NS20', n:'Novena',           x:308, y:110},
-    {c:'NS21', n:'Newton',           x:303, y:98,  ix:['DTL']},
-    {c:'NS22', n:'Orchard',          x:298, y:87},
-    {c:'NS23', n:'Somerset',         x:296, y:96},
-    {c:'NS24', n:'Dhoby Ghaut',      x:295, y:108, ix:['CCL','NEL']},
-    {c:'NS25', n:'City Hall',        x:308, y:100, ix:['EWL']},
-    {c:'NS26', n:'Raffles Place',    x:308, y:110, ix:['EWL']},
-    {c:'NS27', n:'Marina Bay',       x:299, y:80,  ix:['CCL','TEL']},
-    {c:'NS28', n:'Marina South Pier',x:299, y:68},
+    {c:'NS1',  n:'Jurong East',       x:50,  y:100},
+    {c:'NS2',  n:'Bukit Batok',       x:68,  y:92},
+    {c:'NS3',  n:'Bukit Gombak',      x:80,  y:84},
+    {c:'NS4',  n:'Choa Chu Kang',     x:88,  y:74},
+    {c:'NS5',  n:'Yew Tee',           x:92,  y:63},
+    {c:'NS7',  n:'Kranji',            x:118, y:44},
+    {c:'NS8',  n:'Marsiling',         x:135, y:38},
+    {c:'NS9',  n:'Woodlands',         x:155, y:33},
+    {c:'NS10', n:'Admiralty',         x:174, y:33},
+    {c:'NS11', n:'Sembawang',         x:196, y:35},
+    {c:'NS13', n:'Yishun',            x:224, y:40},
+    {c:'NS14', n:'Khatib',            x:244, y:47},
+    {c:'NS15', n:'Yio Chu Kang',      x:263, y:55},
+    {c:'NS16', n:'Ang Mo Kio',        x:278, y:65},
+    {c:'NS17', n:'Bishan',            x:338, y:174},
+    {c:'NS18', n:'Braddell',          x:313, y:134},
+    {c:'NS19', n:'Toa Payoh',         x:313, y:122},
+    {c:'NS20', n:'Novena',            x:308, y:110},
+    {c:'NS21', n:'Newton',            x:303, y:98},
+    {c:'NS22', n:'Orchard',           x:298, y:87},
+    {c:'NS23', n:'Somerset',          x:296, y:96},
+    {c:'NS24', n:'Dhoby Ghaut',       x:295, y:108},
+    {c:'NS25', n:'City Hall',         x:308, y:100},
+    {c:'NS26', n:'Raffles Place',     x:308, y:110},
+    {c:'NS27', n:'Marina Bay',        x:299, y:80},
+    {c:'NS28', n:'Marina South Pier', x:299, y:68},
 ];
 
-// EWL (green): Tuas → Pasir Ris (horizontal-ish)
 const EWL_NODES = [
-    {c:'EW1',  n:'Pasir Ris',    x:560, y:142},
-    {c:'EW2',  n:'Tampines',     x:540, y:148},
-    {c:'EW3',  n:'Simei',        x:519, y:151},
-    {c:'EW4',  n:'Tanah Merah',  x:498, y:148, ix:['EWL-branch']},
-    {c:'EW5',  n:'Bedok',        x:475, y:145},
-    {c:'EW6',  n:'Kembangan',    x:456, y:145},
-    {c:'EW7',  n:'Eunos',        x:435, y:148},
-    {c:'EW8',  n:'Paya Lebar',   x:410, y:155, ix:['CCL']},
-    {c:'EW9',  n:'Aljunied',     x:388, y:152},
-    {c:'EW10', n:'Kallang',      x:368, y:145},
-    {c:'EW11', n:'Lavender',     x:350, y:137},
-    {c:'EW12', n:'Bugis',        x:333, y:129, ix:['DTL']},
-    {c:'EW13', n:'City Hall',    x:308, y:100, ix:['NSL']},
-    {c:'EW14', n:'Raffles Place', x:308,y:110, ix:['NSL']},
-    {c:'EW15', n:'Tanjong Pagar',x:298, y:118},
-    {c:'EW16', n:'Outram Park',  x:284, y:122, ix:['NEL','TEL']},
-    {c:'EW17', n:'Tiong Bahru',  x:270, y:118},
-    {c:'EW18', n:'Redhill',      x:255, y:114},
-    {c:'EW19', n:'Queenstown',   x:240, y:114},
-    {c:'EW20', n:'Commonwealth', x:226, y:120},
-    {c:'EW21', n:'Buona Vista',  x:236, y:148, ix:['CCL']},
-    {c:'EW22', n:'Dover',        x:214, y:134},
-    {c:'EW23', n:'Clementi',     x:196, y:128},
-    {c:'EW24', n:'Jurong East',  x:50,  y:100, ix:['NSL']},
+    {c:'EW1',  n:'Pasir Ris',         x:560, y:142},
+    {c:'EW2',  n:'Tampines',          x:540, y:148},
+    {c:'EW3',  n:'Simei',             x:519, y:151},
+    {c:'EW4',  n:'Tanah Merah',       x:498, y:148},
+    {c:'EW5',  n:'Bedok',             x:475, y:145},
+    {c:'EW6',  n:'Kembangan',         x:456, y:145},
+    {c:'EW7',  n:'Eunos',             x:435, y:148},
+    {c:'EW8',  n:'Paya Lebar',        x:410, y:155},
+    {c:'EW9',  n:'Aljunied',          x:388, y:152},
+    {c:'EW10', n:'Kallang',           x:368, y:145},
+    {c:'EW11', n:'Lavender',          x:350, y:137},
+    {c:'EW12', n:'Bugis',             x:333, y:129},
+    {c:'EW13', n:'City Hall',         x:308, y:100},
+    {c:'EW14', n:'Raffles Place',     x:308, y:110},
+    {c:'EW15', n:'Tanjong Pagar',     x:298, y:118},
+    {c:'EW16', n:'Outram Park',       x:284, y:122},
+    {c:'EW17', n:'Tiong Bahru',       x:270, y:118},
+    {c:'EW18', n:'Redhill',           x:255, y:114},
+    {c:'EW19', n:'Queenstown',        x:240, y:114},
+    {c:'EW20', n:'Commonwealth',      x:226, y:120},
+    {c:'EW21', n:'Buona Vista',       x:236, y:148},
+    {c:'EW22', n:'Dover',             x:214, y:134},
+    {c:'EW23', n:'Clementi',          x:196, y:128},
+    {c:'EW24', n:'Jurong East',       x:50,  y:100},
 ];
 
-// NEL (purple): HarbourFront → Punggol
 const NEL_NODES = [
-    {c:'NE1',  n:'HarbourFront', x:222, y:70,  ix:['CCL']},
-    {c:'NE3',  n:'Outram Park',  x:284, y:122, ix:['EWL','TEL']},
-    {c:'NE4',  n:'Chinatown',    x:291, y:116, ix:['DTL']},
+    {c:'NE1',  n:'HarbourFront', x:222, y:70},
+    {c:'NE3',  n:'Outram Park',  x:284, y:122},
+    {c:'NE4',  n:'Chinatown',    x:291, y:116},
     {c:'NE5',  n:'Clarke Quay',  x:297, y:110},
-    {c:'NE6',  n:'Dhoby Ghaut',  x:295, y:108, ix:['NSL','CCL']},
-    {c:'NE7',  n:'Little India', x:295, y:96,  ix:['DTL']},
+    {c:'NE6',  n:'Dhoby Ghaut',  x:295, y:108},
+    {c:'NE7',  n:'Little India', x:295, y:96},
     {c:'NE8',  n:'Farrer Park',  x:298, y:84},
     {c:'NE9',  n:'Boon Keng',    x:303, y:73},
     {c:'NE10', n:'Potong Pasir', x:318, y:68},
-    {c:'NE12', n:'Serangoon',    x:372, y:183, ix:['CCL']},
+    {c:'NE12', n:'Serangoon',    x:372, y:183},
     {c:'NE13', n:'Kovan',        x:388, y:175},
     {c:'NE14', n:'Hougang',      x:405, y:163},
     {c:'NE17', n:'Punggol',      x:455, y:130},
 ];
 
-// DTL (blue): Bukit Panjang → Expo
 const DTL_NODES = [
-    {c:'DT1',  n:'Bukit Panjang', x:112, y:96},
-    {c:'DT5',  n:'Botanic Gardens',x:285,y:148, ix:['CCL']},
-    {c:'DT9',  n:'MacPherson',    x:408, y:168, ix:['CCL']},
-    {c:'DT10', n:'Promenade',     x:352, y:116, ix:['CCL']},
-    {c:'DT14', n:'Bugis',         x:333, y:129, ix:['EWL']},
-    {c:'DT15', n:'Promenade',     x:352, y:116, ix:['CCL']},
-    {c:'DT16', n:'Bayfront',      x:318, y:88,  ix:['CCL']},
-    {c:'DT17', n:'Downtown',      x:308, y:98},
-    {c:'DT19', n:'Chinatown',     x:291, y:116, ix:['NEL']},
-    {c:'DT26', n:'MacPherson',    x:408, y:168, ix:['CCL']},
-    {c:'DT35', n:'Expo',          x:560, y:132, ix:['EWL']},
+    {c:'DT1',  n:'Bukit Panjang',   x:112, y:96},
+    {c:'DT5',  n:'Botanic Gardens', x:285, y:148},
+    {c:'DT9',  n:'MacPherson',      x:408, y:168},
+    {c:'DT10', n:'Promenade',       x:352, y:116},
+    {c:'DT14', n:'Bugis',           x:333, y:129},
+    {c:'DT16', n:'Bayfront',        x:318, y:88},
+    {c:'DT17', n:'Downtown',        x:308, y:98},
+    {c:'DT19', n:'Chinatown',       x:291, y:116},
+    {c:'DT35', n:'Expo',            x:560, y:132},
 ];
 
-// TEL (brown): Woodlands to Bayshore
 const TEL_NODES = [
     {c:'TE1',  n:'Woodlands North', x:135, y:28},
-    {c:'TE2',  n:'Woodlands',       x:155, y:33, ix:['NSL']},
-    {c:'TE6',  n:'Caldecott',       x:308, y:152, ix:['CCL']},
-    {c:'TE9',  n:'Caldecott',       x:308, y:152, ix:['CCL']},
-    {c:'TE20', n:'Marina Bay',      x:299, y:80,  ix:['NSL','CCL']},
+    {c:'TE2',  n:'Woodlands',       x:155, y:33},
+    {c:'TE6',  n:'Caldecott',       x:308, y:152},
+    {c:'TE20', n:'Marina Bay',      x:299, y:80},
 ];
 
 const LINE_COLORS = {
@@ -566,89 +513,57 @@ const LINE_COLORS = {
     TEL: '#784008',
 };
 
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // STATE
-// ─────────────────────────────────────────────────────
-let curIdx   = 0;
-let dir      = 'cw';
-let loc      = 'train';
-let textMode = 'station';
-let animPct  = 0;
-let lastT    = null;
-let doorsOpen = false;
+// ═══════════════════════════════════════
+let curIdx  = 0;
+let dir     = 'cw';
+let loc     = 'train';
+let animPct = 0;
+let lastT   = null;
 const TRAVEL = 5000;
 
 function nxt(i, d) {
     if (d === 'cw')  return i === CCL.length - 1 ? 3 : i + 1;
-    else             return i === 3 ? CCL.length - 1 : i - 1 < 0 ? CCL.length - 1 : i - 1;
+    else             return i === 3 ? CCL.length - 1 : (i - 1 < 0 ? CCL.length - 1 : i - 1);
 }
-function getCur()  { return CCL[curIdx]; }
-function getNext() { return CCL[nxt(curIdx, dir)]; }
+const getCur  = () => CCL[curIdx];
+const getNext = () => CCL[nxt(curIdx, dir)];
 
-// ─────────────────────────────────────────────────────
-// LED TEXT
-// ─────────────────────────────────────────────────────
-const LED_TEXTS = {
-    station:  () => {
-        const cur = getCur(), next = getNext();
-        return loc === 'station'
-            ? `This station: ${cur.n} (${cur.c})   ·   Doors open on the ${cur.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   Next station: ${next.n} (${next.c})   ·   `
-            : `Next station: ${next.n} (${next.c})   ·   Doors will open on the ${next.door === 'L' ? 'LEFT' : 'RIGHT'}   ·   ${dir === 'cw' ? 'Clockwise' : 'Anticlockwise'} service   ·   `;
-    },
-    courtesy: () => `Please give up your seat to those who need it more — the elderly, pregnant women, and passengers with young children.   ·   请给有需要的乘客让座。   ·   `,
-    gap:      () => `Please mind the platform gap.   ·   请注意列车与站台之间的间隙。   ·   Watch your step.   ·   `,
-    closing:  () => `Doors closing   ·   Doors closing   ·   请关好门   ·   `,
-};
-
-function updateLED() {
-    const t   = LED_TEXTS[textMode]();
-    const el  = document.getElementById('ledText');
-    const txt = t + t; // duplicate for seamless loop
-
-    // For "Doors closing" use static centered text
-    if (textMode === 'closing') {
-        el.textContent = 'Doors closing';
-        el.classList.add('static');
-    } else {
-        el.textContent = txt;
-        el.classList.remove('static');
-        el.style.animation = 'none';
-        void el.offsetWidth;
-        el.style.animation = '';
-    }
-}
-
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // DOOR INDICATORS
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 function updateDoors() {
-    const st = loc === 'station' ? getCur() : getNext();
-    const tL = document.getElementById('triLeft');
-    const tR = document.getElementById('triRight');
+    const st       = loc === 'station' ? getCur() : getNext();
+    const tL       = document.getElementById('triLeft');
+    const tR       = document.getElementById('triRight');
+    const atStation = loc === 'station';
 
     const isLeft  = st.door === 'L';
     const isRight = st.door === 'R';
-    const shouldBlink = loc === 'station' && doorsOpen;
 
-    tL.className = 'door-tri' + (isLeft  ? ' active' : '') + (isLeft  && shouldBlink ? ' blink' : '');
-    tR.className = 'door-tri' + (isRight ? ' active' : '') + (isRight && shouldBlink ? ' blink' : '');
+    tL.className = 'door-tri'
+        + (isLeft  ? ' active' : '')
+        + (isLeft  && atStation ? ' blink' : '');
+    tR.className = 'door-tri'
+        + (isRight ? ' active' : '')
+        + (isRight && atStation ? ' blink' : '');
 }
 
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // LEGEND
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 function buildLegend() {
     const el = document.getElementById('legend');
     el.innerHTML = '';
-    const lines = [
+    [
         ['NSL', 'North-South Line'],
         ['EWL', 'East-West Line'],
         ['NEL', 'North East Line'],
         ['CCL', 'Circle Line'],
         ['DTL', 'Downtown Line'],
-        ['TEL', 'Thomson-East Coast'],
-    ];
-    lines.forEach(([code, name]) => {
+        ['TEL', 'Thomson-East Coast Line'],
+    ].forEach(([code, name]) => {
         const row = document.createElement('div');
         row.className = 'legend-item';
         row.innerHTML = `<div class="legend-line" style="background:${LINE_COLORS[code]}"></div><span>${name}</span>`;
@@ -656,9 +571,9 @@ function buildLegend() {
     });
 }
 
-// ─────────────────────────────────────────────────────
-// NETWORK MAP SVG
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
+// MAP SVG
+// ═══════════════════════════════════════
 function svgEl(tag, attrs, txt) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
@@ -670,73 +585,61 @@ function buildMap() {
     const svg = document.getElementById('networkSvg');
     svg.innerHTML = '';
 
-    // ── Draw other lines first (behind CCL) ──
-    function drawLine(nodes, color, strokeW = 2) {
+    // Background line segments
+    function drawLine(nodes, color, sw) {
         for (let i = 0; i < nodes.length - 1; i++) {
-            const a = nodes[i], b = nodes[i + 1];
+            const a = nodes[i], b = nodes[i+1];
             svg.appendChild(svgEl('line', {
                 x1: a.x, y1: a.y, x2: b.x, y2: b.y,
-                stroke: color, 'stroke-width': strokeW,
-                'stroke-linecap': 'round', opacity: '0.55',
+                stroke: color, 'stroke-width': sw,
+                'stroke-linecap': 'round', opacity: '0.6',
             }));
         }
     }
-
-    // Draw background lines
     drawLine(NSL_NODES, LINE_COLORS.NSL, 2.5);
     drawLine(EWL_NODES, LINE_COLORS.EWL, 2.5);
     drawLine(NEL_NODES, LINE_COLORS.NEL, 2.5);
     drawLine(DTL_NODES, LINE_COLORS.DTL, 2);
     drawLine(TEL_NODES, LINE_COLORS.TEL, 2);
 
-    // ── Draw CCL loop ──
-    // Build ordered point list: CC1→CC2→…→CC34→back to CC4
-    const cclOrder = [...CCL];
-    // Draw segments
-    const cclPts = cclOrder.map(s => CCL_POS[s.c]);
-
+    // CCL loop segments
+    const cclPts = CCL.map(s => CCL_POS[s.c]);
     for (let i = 0; i < cclPts.length - 1; i++) {
-        const a = cclPts[i], b = cclPts[i + 1];
-        // Determine if this segment is "passed" (between start and train position)
-        const segPassed = isSegmentPassed(i);
+        const [ax, ay] = cclPts[i], [bx, by] = cclPts[i+1];
+        const passed = dir === 'cw' ? i < curIdx : i > curIdx;
         svg.appendChild(svgEl('line', {
-            x1: a[0], y1: a[1], x2: b[0], y2: b[1],
-            stroke: LINE_COLORS.CCL,
-            'stroke-width': '3',
+            x1: ax, y1: ay, x2: bx, y2: by,
+            stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
             'stroke-linecap': 'round',
-            opacity: segPassed ? '0.3' : '1',
+            opacity: passed ? '0.25' : '1',
         }));
     }
-    // Close loop: CC34 → CC4 (Promenade)
-    const cc34 = CCL_POS['CC34'], cc4 = CCL_POS['CC4'];
+    // Close loop: CC34 → CC4
+    const [c34x, c34y] = CCL_POS['CC34'], [c4x, c4y] = CCL_POS['CC4'];
     svg.appendChild(svgEl('line', {
-        x1: cc34[0], y1: cc34[1], x2: cc4[0], y2: cc4[1],
-        stroke: LINE_COLORS.CCL, 'stroke-width': '3',
+        x1: c34x, y1: c34y, x2: c4x, y2: c4y,
+        stroke: LINE_COLORS.CCL, 'stroke-width': '3.5',
         'stroke-linecap': 'round', opacity: '1',
     }));
 
-    // ── Station dots for other lines ──
-    function drawStationDots(nodes, lineColor) {
+    // Other line station dots (small)
+    function drawDots(nodes, lineColor) {
         nodes.forEach(s => {
-            const hasIx = s.ix && s.ix.length > 0;
             svg.appendChild(svgEl('circle', {
-                cx: s.x, cy: s.y,
-                r: hasIx ? 3.5 : 2,
-                fill: '#fff',
-                stroke: lineColor, 'stroke-width': '1',
-                opacity: '0.7',
+                cx: s.x, cy: s.y, r: '1.8',
+                fill: '#fff', stroke: lineColor, 'stroke-width': '0.8', opacity: '0.75',
             }));
         });
     }
-    drawStationDots(NSL_NODES, LINE_COLORS.NSL);
-    drawStationDots(EWL_NODES, LINE_COLORS.EWL);
-    drawStationDots(NEL_NODES, LINE_COLORS.NEL);
-    drawStationDots(DTL_NODES, LINE_COLORS.DTL);
-    drawStationDots(TEL_NODES, LINE_COLORS.TEL);
+    drawDots(NSL_NODES, LINE_COLORS.NSL);
+    drawDots(EWL_NODES, LINE_COLORS.EWL);
+    drawDots(NEL_NODES, LINE_COLORS.NEL);
+    drawDots(DTL_NODES, LINE_COLORS.DTL);
+    drawDots(TEL_NODES, LINE_COLORS.TEL);
 
-    // ── CCL station dots ──
-    const cur  = getCur();
-    const next = getNext();
+    // CCL station dots + labels
+    const cur     = getCur();
+    const next    = getNext();
     const curPos  = CCL_POS[cur.c];
     const nextPos = CCL_POS[next.c];
 
@@ -744,87 +647,68 @@ function buildMap() {
         const [x, y] = CCL_POS[st.c];
         const isCur  = st.c === cur.c;
         const isNext = st.c === next.c;
-        const isPast = isStationPassed(i);
+        const passed = dir === 'cw' ? i < curIdx : i > curIdx;
         const hasIx  = st.ix.length > 0;
+        const op     = passed && !isCur && !isNext ? '0.3' : '1';
 
-        // Dot
-        const r    = isCur ? 6 : isNext ? 5 : hasIx ? 3.5 : 2.5;
-        const fill = isCur ? '#fff' : isNext ? LINE_COLORS.CCL : '#fff';
-        const stroke     = isCur ? LINE_COLORS.CCL : isNext ? '#fff' : LINE_COLORS.CCL;
-        const strokeW    = isCur ? 2.5 : isNext ? 1.5 : 1;
-        const opacity    = isPast && !isCur && !isNext ? '0.35' : '1';
+        // Dot sizing
+        const r       = isCur ? 6 : isNext ? 5 : hasIx ? 3.5 : 2.5;
+        const fill    = isCur ? '#fff' : isNext ? LINE_COLORS.CCL : '#fff';
+        const stroke  = isCur ? LINE_COLORS.CCL : isNext ? '#fff' : LINE_COLORS.CCL;
+        const sw      = isCur ? 2.5 : isNext ? 1.5 : 1;
 
-        svg.appendChild(svgEl('circle', {
-            cx: x, cy: y, r,
-            fill, stroke, 'stroke-width': strokeW, opacity,
-        }));
+        svg.appendChild(svgEl('circle', { cx: x, cy: y, r, fill, stroke, 'stroke-width': sw, opacity: op }));
 
-        // Interchange coloured rings
+        // Interchange colour rings below dot
         if (hasIx) {
             st.ix.forEach((line, ri) => {
                 svg.appendChild(svgEl('circle', {
-                    cx: x + (ri * 6) - (st.ix.length - 1) * 3,
-                    cy: y + r + 4,
-                    r: 2.5,
+                    cx: x + (ri * 7) - (st.ix.length - 1) * 3.5,
+                    cy: y + r + 5,
+                    r: '2.8',
                     fill: LINE_COLORS[line] || '#888',
-                    stroke: '#f0f0ec', 'stroke-width': '0.5',
+                    stroke: '#e8ebe6', 'stroke-width': '0.6',
+                    opacity: op,
                 }));
             });
         }
 
-        // Station code label
-        const above = y > 100; // label above or below based on position
-        const labelY = above ? y - r - 3 : y + r + 8;
+        // Label for current, next, or interchange stations
         if (isCur || isNext || hasIx) {
-            const txt = svgEl('text', {
+            const above  = y > 120;
+            const labelY = above ? y - r - 3 : y + r + 8;
+            const label  = st.n.length > 14 ? st.c : st.n;
+            svg.appendChild(svgEl('text', {
                 x, y: labelY,
                 'text-anchor': 'middle',
                 'font-family': 'LTAIdentity, sans-serif',
-                'font-size': isCur || isNext ? '7' : '5.5',
-                fill: isCur ? '#111' : isNext ? '#c97200' : '#444',
-                'font-weight': isCur || isNext ? '600' : 'normal',
-                opacity: isPast && !isCur && !isNext ? '0.4' : '1',
-            }, st.n.length > 12 ? st.c : st.n);
-            svg.appendChild(txt);
+                'font-size': isCur || isNext ? '7.5' : '5.5',
+                fill: isCur ? '#111' : isNext ? '#c97200' : '#333',
+                'font-weight': isCur || isNext ? '700' : 'normal',
+                opacity: passed && !isCur && !isNext ? '0.35' : '1',
+            }, label));
         }
     });
 
-    // ── Animated train position ──
-    // Interpolate between cur and next CCL positions
+    // Animated train dot — interpolated between cur & next
     const trainX = curPos[0] + (nextPos[0] - curPos[0]) * animPct;
     const trainY = curPos[1] + (nextPos[1] - curPos[1]) * animPct;
+    const angle  = Math.atan2(nextPos[1] - curPos[1], nextPos[0] - curPos[0]);
 
-    // Train dot (orange circle with white ring)
     svg.appendChild(svgEl('circle', {
-        cx: trainX, cy: trainY, r: 5,
-        fill: LINE_COLORS.CCL,
-        stroke: '#fff', 'stroke-width': '1.5',
+        cx: trainX, cy: trainY, r: '5.5',
+        fill: LINE_COLORS.CCL, stroke: '#fff', 'stroke-width': '1.5',
     }));
-    // Small arrow inside
-    const angle = Math.atan2(nextPos[1] - curPos[1], nextPos[0] - curPos[0]);
-    const ax = trainX + Math.cos(angle) * 2.5;
-    const ay = trainY + Math.sin(angle) * 2.5;
-    svg.appendChild(svgEl('circle', { cx: ax, cy: ay, r: 1, fill: '#000' }));
+    svg.appendChild(svgEl('circle', {
+        cx: trainX + Math.cos(angle) * 2.5,
+        cy: trainY + Math.sin(angle) * 2.5,
+        r: '1.2', fill: '#000',
+    }));
 }
 
-// ─────────────────────────────────────────────────────
-// HELPERS: passed segments/stations
-// ─────────────────────────────────────────────────────
-function isStationPassed(i) {
-    // A station is "passed" if it's behind the current position in travel dir
-    // Simple: just dim everything before curIdx
-    if (dir === 'cw') return i < curIdx;
-    else              return i > curIdx;
-}
-
-function isSegmentPassed(segIdx) {
-    if (dir === 'cw') return segIdx < curIdx;
-    else              return segIdx > curIdx;
-}
-
-// ─────────────────────────────────────────────────────
-// ANIMATION
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
+// ANIMATION LOOP
+// ═══════════════════════════════════════
 function animate(ts) {
     if (!lastT) lastT = ts;
     const dt = ts - lastT;
@@ -835,7 +719,7 @@ function animate(ts) {
         if (animPct >= 1) {
             animPct = 0;
             curIdx  = nxt(curIdx, dir);
-            updateUI();
+            updateDoors();
             updateStationBtns();
         }
     }
@@ -844,39 +728,22 @@ function animate(ts) {
 }
 requestAnimationFrame(animate);
 
-// ─────────────────────────────────────────────────────
-// UI UPDATE
-// ─────────────────────────────────────────────────────
-function updateUI() {
-    updateLED();
-    updateDoors();
-}
-
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // CONTROLS
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 function setDir(d) {
     dir = d; animPct = 0; lastT = null;
     document.getElementById('btnCW').classList.toggle('on',  d === 'cw');
     document.getElementById('btnCCW').classList.toggle('on', d === 'ccw');
-    updateUI();
+    updateDoors();
 }
 
 function setLoc(l) {
     loc = l; animPct = 0; lastT = null;
     document.getElementById('btnTrain').classList.toggle('on',   l === 'train');
     document.getElementById('btnStation').classList.toggle('on', l === 'station');
-    doorsOpen = (l === 'station');
-    updateUI();
+    updateDoors();
 }
-
-document.getElementById('textBtns').addEventListener('click', e => {
-    const btn = e.target.closest('[data-t]');
-    if (!btn) return;
-    textMode = btn.dataset.t;
-    document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
-    updateUI();
-});
 
 function buildStationBtns() {
     const wrap = document.getElementById('stationBtns');
@@ -886,7 +753,7 @@ function buildStationBtns() {
         b.textContent = `${st.c} ${st.n}`;
         b.addEventListener('click', () => {
             curIdx = i; animPct = 0; lastT = null;
-            updateUI(); updateStationBtns(); buildMap();
+            updateDoors(); updateStationBtns(); buildMap();
         });
         wrap.appendChild(b);
     });
@@ -897,12 +764,12 @@ function updateStationBtns() {
     });
 }
 
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 // INIT
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════
 buildLegend();
 buildStationBtns();
-updateUI();
+updateDoors();
 </script>
 </body>
 </html>
