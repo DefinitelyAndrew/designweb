@@ -332,6 +332,15 @@ body {
             <button class="btn"    id="btnStation" onclick="setLoc('station')">🚉 At station</button>
         </div>
     </div>
+    <div class="ctrl-row">
+        <span class="ctrl-lbl">Screen text</span>
+        <div class="btn-grp" id="textBtns">
+            <button class="btn on" data-t="station">Station</button>
+            <button class="btn"    data-t="courtesy">Courtesy</button>
+            <button class="btn"    data-t="gap">Mind the Gap</button>
+            <button class="btn"    data-t="closing">Doors Closing</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -516,11 +525,12 @@ const LINE_COLORS = {
 // ═══════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════
-let curIdx  = 0;
-let dir     = 'cw';
-let loc     = 'train';
-let animPct = 0;
-let lastT   = null;
+let curIdx   = 0;
+let dir      = 'cw';
+let loc      = 'train';
+let textMode = 'station';
+let animPct  = 0;
+let lastT    = null;
 const TRAVEL = 5000;
 
 function nxt(i, d) {
@@ -714,7 +724,7 @@ function animate(ts) {
     const dt = ts - lastT;
     lastT = ts;
 
-    if (loc === 'train') {
+    if (loc === 'train' && textMode === 'station') {
         animPct += dt / TRAVEL;
         if (animPct >= 1) {
             animPct = 0;
@@ -744,6 +754,15 @@ function setLoc(l) {
     document.getElementById('btnStation').classList.toggle('on', l === 'station');
     updateDoors();
 }
+
+document.getElementById('textBtns').addEventListener('click', e => {
+    const btn = e.target.closest('[data-t]');
+    if (!btn) return;
+    textMode = btn.dataset.t;
+    // Reset lastT so the clock doesn't jump when resuming
+    lastT = null;
+    document.querySelectorAll('#textBtns .btn').forEach(b => b.classList.toggle('on', b === btn));
+});
 
 function buildStationBtns() {
     const wrap = document.getElementById('stationBtns');
